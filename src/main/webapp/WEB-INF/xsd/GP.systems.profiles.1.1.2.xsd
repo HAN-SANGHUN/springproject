@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:gp="http://namespaces.globalplatform.org/systems-profiles/1.1.2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://namespaces.globalplatform.org/systems-profiles/1.1.2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.CardProfile.xsd"/>
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.ApplicationProfile.xsd"/>
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.KeyProfile.xsd"/>
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.LoadFileProfile.xsd"/>
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.0.CardPrintingProfile.xsd"/>
+</xsd:schema>

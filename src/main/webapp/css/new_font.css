@@ -1,0 +1,52 @@
+@charset "uft-8";
+
+/* WEB FONTS */
+@font-face {
+font-family:'NGNormal';
+font-style:normal;
+font-weight:400;
+src:url('/font/NanumGothic.eot');
+src:local(※), url('/font/NanumGothic.eot') format('embedded-opentype'), url('/font/NanumGothic.woff') format('woff');
+}
+
+@font-face {
+font-family:'NGBold';
+font-style:normal;
+font-weight:700;
+src:url('/font/NanumGothicBold.eot');
+src:local(※), url('/font/NanumGothicBold.eot') format('embedded-opentype'), url('/font/NanumGothicBold.woff') format('woff');
+}
+
+input,select, textarea{font-family:'NGNormal';}
+
+/* Left Navigation*/
+#nav {margin-top:15px;}
+#nav > li > a {font:13px 'NGBold';}
+#nav li ul li a {font:11px 'NGNormal';line-height:18px;}
+
+/* Content Wrap*/
+#main_box {left:255px;}
+
+/* Title */
+#main-con_top h1 {font:20px "나눔고딕", NGBold;}
+#main_box h2 {font:15px 'NGNormal';}
+
+/* Button */
+.button {font:11px 'NGNormal';}
+
+/* Search Table*/
+#search_box tbody tr th {font:11px "나눔고딕", NGBold;letter-spacing:0;letter-spacing:0;}
+#search_box tbody tr td input, #search_box tbody tr td select {font-family:'NGNormal';}
+
+/* List Table*/
+.Table-Style_main thead tr th, .Table-Style_main tbody tr td {font-family:'NGNormal';letter-spacing:0;/*white-space: nowrap;*/}
+
+/* Grid Table*/
+.ui-widget{font-family:"NGNormal";}
+.ui-widget input, .ui-widget select, .ui-widget textarea, .ui-widget button{font-family:"NGNormal";}
+
+/* Paging */
+.ft_btm{font:13px "나눔고딕", NGBold;}
+
+/* Footer */
+#footer_box {font:11px "Tahoma", NGBold;letter-spacing:1px;}

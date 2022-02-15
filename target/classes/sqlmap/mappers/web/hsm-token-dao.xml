@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="token">
+	
+	<sql id="tokenList_find">
+		WHERE 1 = 1
+		
+		<if test="tokenLabel !='' and tokenLabel != null">
+          AND token_label like '%${tokenLabel}%'
+        </if>
+		<if test="companyName !='' and companyName != null">
+          AND com_id IN (select com_id from khm_com where com_name LIKE '%${companyName}%')
+        </if>
+	</sql>
+	
+	<select id="getTokenList" parameterType="com.kona.kms.web.ss.token.model.TokenModel" resultType="com.kona.kms.web.ss.token.model.TokenModel">
+		SELECT *
+		FROM (	SELECT 	ROWNUM AS RNUM,
+			         	b.*
+				FROM (	SELECT	token_no       as tokenNo,
+								(select max(slot_no) from khm_ptoken z where z.token_no=a.token_no) as slotNo,
+								com_id         as companyID,
+								(select com_name from khm_com m where m.com_id=a.com_id) as companyName,
+								(select lhsm_label from khm_lhsm h where h.lhsm_no=a.lhsm_no) as hsmLabel,
+								token_label    as tokenLabel,
+								token_pin      as tokenPin,
+								token_descr    as description,
+								reg_user_id	   as registrationUserID,
+								reg_tmpst	   as registrationDate,
+								upd_user_id	   as updateUserID,
+								upd_tmpst	   as updateDate
+						FROM	khm_ltoken a
+						<include refid="tokenList_find" />
+						ORDER BY ${sortname} ${sortorder}
+						) b) c
+		WHERE c.RNUM BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+	
+	<select id="getTotalRecord" parameterType="com.kona.kms.web.ss.token.model.TokenModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM khm_ltoken
+        <include refid="tokenList_find"/>
+	</select>
+	
+	<select id="getToken" parameterType="string" resultType="com.kona.kms.web.ss.token.model.TokenModel">
+		SELECT	token_no       as tokenNo,
+			    com_id         as companyID,
+				(select com_name from khm_com m where m.com_id=a.com_id) as companyName,
+				token_label    as tokenLabel,
+				token_pin      as tokenPin,
+				token_descr    as description,
+				reg_user_id	   as registrationUserID,
+				reg_tmpst	   as registrationDate,
+				upd_user_id	   as updateUserID,
+				upd_tmpst	   as updateDate
+		FROM	khm_ltoken a
+		WHERE   token_no = #{tokenId}
+	</select>
+	
+	<update id="updateToken" parameterType="com.kona.kms.web.ss.token.model.TokenModel">
+		UPDATE khm_ltoken
+		SET    token_pin = #{tokenPin},
+		       token_descr = #{description},
+			   upd_user_id = #{updateUserID}, 
+			   upd_tmpst = #{updateDate}		
+		WHERE token_no=#{tokenNo}
+	</update>
+	
+	<update id="initToken" parameterType="com.kona.kms.web.ss.token.model.TokenModel">
+		UPDATE khm_ltoken
+		SET    token_label = #{tokenLabel},
+			   com_id = #{companyID},
+			   token_pin = #{tokenPin},
+		       token_descr = #{description},
+			   upd_user_id = #{updateUserID}, 
+			   upd_tmpst = #{updateDate}		
+		WHERE token_no=#{tokenNo}
+	</update>
+	
+	<insert id="insertLogicalToken" parameterType="com.kona.kms.token.model.LTokenModel"> 
+		<selectKey resultType="long" keyProperty="tokenNo" order="BEFORE">
+			select ltoken_no_seq.nextval from dual
+		</selectKey>
+		INSERT INTO khm_ltoken (
+			token_no,
+			token_label,
+			com_id,
+			lhsm_no,
+			token_pin,
+			token_descr,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst)
+        VALUES (
+        	#{tokenNo},
+        	#{tokenLabel},
+        	#{companyID},
+        	#{lhsmNo},
+        	#{tokenPin},
+        	#{description},
+        	#{registrationUserID}, 
+        	#{registrationDate}, 
+        	#{updateUserID}, 
+        	#{updateDate}) 
+	</insert>
+	
+	<insert id="insertPhysicalToken" parameterType="com.kona.kms.token.model.PTokenModel"> 
+		<selectKey resultType="long" keyProperty="slotIndex" order="BEFORE">
+			select ltoken_no_seq.nextval from dual
+		</selectKey>
+		INSERT INTO khm_ptoken (
+			slot_index,
+			hsm_no,
+			slot_no,
+			slot_stats_cd,
+			token_no,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst)
+        VALUES (
+        	#{slotIndex},
+        	#{hsmNo},
+        	#{slotNo},
+        	#{slotStatusCode},
+        	#{tokenNo},
+        	#{registrationUserID}, 
+        	#{registrationDate}, 
+        	#{updateUserID}, 
+        	#{updateDate}) 
+	</insert>
+		
+	<select id="getTokenNo" parameterType="string" resultType="String">
+		  	SELECT	token_no       as TokenNo
+			FROM	khm_ltoken 
+			WHERE   com_id=#{companyId}
+	</select>
+	
+	<select id="getTokenNos" resultType="hashmap">
+		  	SELECT	token_no       as TokenNo
+			FROM	khm_ltoken
+			ORDER	BY 	TOKEN_NO ASC 
+	</select>
+	
+	<!-- slot -->
+	<update id="activatePToken" parameterType="com.kona.kms.web.ss.token.model.SlotModel">
+		UPDATE 	khm_ptoken
+		SET    	slot_stats_cd = #{slotStatusCode}
+		WHERE 	token_no = #{tokenNo}
+	</update>
+	
+	<update id="activateSlot" parameterType="com.kona.kms.web.ss.token.model.SlotModel">
+		UPDATE khm_ptoken
+		SET    token_no = #{tokenNo},
+		       slot_stats_cd = #{slotStatusCode}
+		WHERE slot_index=#{slotIndex}
+	</update>
+	
+	<select id="getSlotInfos" parameterType="string" resultType="com.kona.kms.web.ss.token.model.SlotModel">
+	  	SELECT	slot_index       as slotIndex,
+	  	        token_no         as tokenNO,
+	  	        hsm_no           as hsmNo,
+	  	        (select hsm_label from khm_phsm h where h.hsm_no = a.hsm_no) as hsmLabel,
+	  	        slot_no          as slotNo,
+	  	        slot_stats_cd    as slotStatusCode,
+	  	        reg_user_id      as registrationUserID,
+	  	        reg_tmpst        as registrationDate,
+	  	        upd_user_id      as updateUserID,
+	  	        upd_tmpst        as updateDate
+		FROM	khm_ptoken a
+		WHERE   token_no =#{value}
+	    ORDER BY hsm_no ASC 
+	</select>
+	
+	<select id="getEmptySlots" resultType="com.kona.kms.web.ss.token.model.SlotModel">
+		select min(TO_NUMBER(slot_index))	as slotIndex,
+  	           hsm_no                       as hsmNo
+		from khm_ptoken
+		where slot_stats_cd = 'Inactive'
+		group by hsm_no
+	</select>
+	
+	<sql id="slotList_find">
+		WHERE 1 = 1
+		
+		<if test="hsmNo !='' and hsmNo != null">
+          AND hsm_no = '${hsmNo}'
+        </if>
+		<if test="slotStatusCode !='' and slotStatusCode != null">
+          AND slot_stats_cd = '${slotStatusCode}'
+        </if>
+	</sql>
+	
+	<select id="getSlotList" parameterType="com.kona.kms.web.ss.token.model.SlotModel" resultType="com.kona.kms.web.ss.token.model.SlotModel">
+		SELECT *
+		FROM (	SELECT 	ROWNUM AS RNUM,
+			         	b.*
+				FROM (	SELECT	slot_index       as slotIndex,
+					  	        token_no         as tokenNO,
+					  	        hsm_no           as hsmNo,
+					  	        (select hsm_label from khm_phsm h where h.hsm_no = a.hsm_no) as hsmLabel,
+					  	        slot_no          as slotNo,
+					  	        slot_stats_cd    as slotStatusCode,
+					  	        reg_user_id      as registrationUserID,
+					  	        reg_tmpst        as registrationDate,
+					  	        upd_user_id      as updateUserID,
+					  	        upd_tmpst        as updateDate
+						FROM	khm_ptoken a
+						<include refid="slotList_find" />
+						ORDER BY ${sortname} ${sortorder}
+						) b) c
+		WHERE c.RNUM BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+	
+	<select id="getSlotTotalRecord" parameterType="com.kona.kms.web.ss.token.model.SlotModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM khm_ptoken
+        <include refid="slotList_find"/>
+	</select>
+	 
+
+</mapper>

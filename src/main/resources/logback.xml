@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- configuration file for LogBack (slf4J implementation) See here for more details: http://gordondickens.com/wordpress/2013/03/27/sawing-through-the-java-loggers/ -->
+
+<configuration scanPeriod="30 seconds" scan="true">
+
+
+<contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+
+<resetJUL>true</resetJUL>
+
+</contextListener>
+
+<!-- To enable JMX Management -->
+
+
+<jmxConfigurator/>
+
+
+<appender class="ch.qos.logback.core.ConsoleAppender" name="console">
+
+
+<encoder>
+
+<!-- <pattern>%d{HH:mm:ss}> %-5level %logger{0} - %msg%n</pattern> -->
+
+
+<pattern>%d{HH:mm:ss.SSS}.%thread> %-5level %F:%L - %msg%n</pattern>
+
+</encoder>
+
+</appender>
+
+
+<appender class="ch.qos.logback.core.rolling.RollingFileAppender" name="dailyRolling">
+
+<file>C:/CPSLog/KMS/KMS.log</file>
+
+
+<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+
+<fileNamePattern>C:/CPSLog/KMS/KMS-%d{yyyyMMdd}.log</fileNamePattern>
+
+<maxHistory>30</maxHistory>
+
+</rollingPolicy>
+
+
+<encoder>
+
+<!-- <pattern>%d{HH:mm:ss.ssss}.%thread> %-5level %F:%L - %msg%n</pattern> -->
+
+
+<pattern>%d{HH:mm:ss.SSS}.%thread> %-5level - %msg%n</pattern>
+
+</encoder>
+
+</appender>
+
+<!--<logger name="org.hibernate" level="debug"/> -->
+
+
+<!-- Uncomment and add your logger here: <logger name="org.springframework.web" level="debug"/> -->
+
+
+
+<root level="debug">
+
+<appender-ref ref="console"/>
+
+<appender-ref ref="dailyRolling"/>
+
+</root>
+
+</configuration>
+
+
+
+
+<!-- <?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+    <appender name="Console" class="ch.qos.logback.core.ConsoleAppender"> 
+        <encoder charset="UTF-8">
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender> 
+
+    <appender name="RollingFile" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>TRACE</level>
+        </filter>
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>C:/CPSLog/KMS/KMS-%d{yyyy-MM-dd}.log</fileNamePattern>
+            <maxHistory>10</maxHistory>
+        </rollingPolicy>
+
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="DEBUG">
+        <appender-ref ref="Console" />
+        <appender-ref ref="RollingFile"/>
+    </root>
+
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="com.opensymphony" level="WARN"/>
+    <logger name="org.apache" level="WARN"/>
+</configuration> -->
+
+

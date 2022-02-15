@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="keyInfo">
+	
+	<select id="getKeyInfoAll" resultType="com.kona.kms.token.model.KeyInfo">
+		SELECT  a.key_label as keyLabel,
+        		a.key_type_cd as keyType,
+        		a.key_subtp_cd as keySubType,
+        		a.key_size as keySize,
+        		to_number(b.token_no) as tokenNo,
+        		b.token_label as tokenLabel
+		FROM 	kky_prof a, khm_ltoken b
+		WHERE 	a.key_label is not null
+		 AND 	b.com_id = a.com_id
+		 AND	a.key_stats_cd = 'Y'
+	</select>
+	
+	<select id="getTotalRecord"  resultType="Integer">
+		SELECT COUNT(*) AS recordCount
+        FROM kky_prof
+	</select>
+	
+</mapper>

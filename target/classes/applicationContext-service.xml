@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="keyManager" class="com.kona.kms.token.KeyManager" factory-method="getInstance" >
+		<!-- <property name="soPin" value="1111" />
+		<property name="adminPin" value="1111" /> -->
+		
+		<property name="soPin" value="${default_soPin}" />
+		<property name="adminPin" value="${default_adminPin}" />
+	</bean>
+	
+	<bean id="cryptoManager" class="com.kona.kms.crypto.CryptoManager" factory-method="getInstance" >
+		<!-- <property name="library" value="C:/Program Files/SafeNet/Protect Toolkit C SDK/bin/hsm/cryptoki.dll" /> -->
+		<!-- <property name="library" value="%HSM_SDK%/bin/sw/cryptoki.dll" /> -->
+		<property name="library" value="${default_hsm_dll}" />
+	</bean>
+	
+	<bean id="keyAttrMgmt" class="com.kona.kms.crypto.KeyAttrMgmt" factory-method="getInstance">
+		<property name="usageDefs">
+			<map>
+				<entry key="PRIVATE" 		value="boolean" />
+				<entry key="TOKEN" 			value="boolean" />
+				<entry key="SENSITIVE" 		value="boolean" />
+				<entry key="EXTRACTABLE" 	value="boolean" />
+				
+				<!-- add by shifei 2014-04-14 -->
+				<entry key="EXPORTABLE" value="boolean" />
+				<entry key="IMPORT" value="boolean" />
+				
+				<entry key="ENCRYPT" 		value="boolean" />
+				<entry key="DECRYPT" 		value="boolean" />
+				<entry key="WRAP" 			value="boolean" />
+				<entry key="UNWRAP" 		value="boolean" />
+				<entry key="SIGN" 			value="boolean" />
+				<entry key="VERIFY" 		value="boolean" />
+				<entry key="SIGNRECOVER" 	value="boolean" />
+				<entry key="VERIFYRECOVER"	value="boolean" />
+				<entry key="DERIVE" 		value="boolean" />
+				<entry key="LABEL" 			value="string" />
+				<entry key="SEED" 			value="hexstring" />
+				<entry key="SUBJECT" 		value="string" />
+				<entry key="MODULUS_BITS" 	value="long" />
+				<entry key="MODULUS" 		value="hexstring" />
+				<entry key="PUBLIC_EXPONENT" 	value="hexstring" />
+				<entry key="PRIVATE_EXPONENT" 	value="hexstring" />
+				<entry key="PRIME_1" 		value="hexstring" />
+				<entry key="PRIME_2" 		value="hexstring" />
+				<entry key="EXPONENT_1" 	value="hexstring" />
+				<entry key="EXPONENT_2" 	value="hexstring" />
+				<entry key="COEFFICIENT" 	value="hexstring" />
+				<entry key="VALUE" 			value="hexstring" />
+				<entry key="START_DATE" 	value="string" />
+				<entry key="END_DATE" 		value="string" />
+			</map>
+		</property>
+	</bean>
+	
+	<bean id="mechMgmt" class="com.kona.kms.crypto.MechMgmt" factory-method="getInstance">
+		<property name="mechanisms">
+			<map>
+<!--  			
+				<entry key="DES3_KEY_GEN"> <bean class="com.kona.kms.crypto.mech.MechTripleDes" factory-method="getInstance"/> </entry>
+				<entry key="DES3_KEY"> <bean class="com.kona.kms.crypto.mech.MechTripleDes" factory-method="getInstance"/> </entry>
+				<entry key="DES3_ECB"> <bean class="com.kona.kms.crypto.mech.MechTripleDes" factory-method="getInstance"/> </entry>
+				<entry key="DES3_CBC"> <bean class="com.kona.kms.crypto.mech.MechTripleDes" factory-method="getInstance"/> </entry>
+				<entry key="DES_KEY_GEN"> <bean class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance"/> </entry>
+				<entry key="DES_KEY"> <bean class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance"/> </entry>
+				<entry key="DES_ECB"> <bean class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance"/> </entry>
+				<entry key="DES_CBC"> <bean class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance"/> </entry>
+				<entry key="SEED_KEY_GEN"> <bean class="com.kona.kms.crypto.mech.MechSeed" factory-method="getInstance"/> </entry>
+				<entry key="SEED_KEY"> <bean class="com.kona.kms.crypto.mech.MechSeed" factory-method="getInstance"/> </entry>
+				<entry key="SEED_ECB"> <bean class="com.kona.kms.crypto.mech.MechSeed" factory-method="getInstance"/> </entry>
+				<entry key="SEED_CBC"> <bean class="com.kona.kms.crypto.mech.MechSeed" factory-method="getInstance"/> </entry>
+				<entry key="SEED_MAC"> <bean class="com.kona.kms.crypto.mech.MechSeed" factory-method="getInstance"/> </entry>
+				<entry key="AES_KEY_GEN"> <bean class="com.kona.kms.crypto.mech.MechAES" factory-method="getInstance"/> </entry>
+				<entry key="AES_KEY"> <bean class="com.kona.kms.crypto.mech.MechAES" factory-method="getInstance"/> </entry>
+				<entry key="AES_ECB"> <bean class="com.kona.kms.crypto.mech.MechAES" factory-method="getInstance"/> </entry>
+				<entry key="AES_CBC"> <bean class="com.kona.kms.crypto.mech.MechAES" factory-method="getInstance"/> </entry>
+				<entry key="AES_MAC"> <bean class="com.kona.kms.crypto.mech.MechAES" factory-method="getInstance"/> </entry>
+				<entry key="DES2_KEY_GEN"> <bean class="com.kona.kms.crypto.mech.MechDoubleDes" factory-method="getInstance"/> </entry>
+				<entry key="DES2_ECB"> <bean class="com.kona.kms.crypto.mech.MechDoubleDes" factory-method="getInstance"/> </entry>
+				<entry key="DES2_CBC"> <bean class="com.kona.kms.crypto.mech.MechDoubleDes" factory-method="getInstance"/> </entry>
+				<entry key="RSA_PKCS_KEY_PAIR_GEN"> <bean class="com.kona.kms.crypto.mech.MechRSA" factory-method="getInstance"/> </entry>
+				<entry key="RSA_PKCS_KEY"> <bean class="com.kona.kms.crypto.mech.MechRSA" factory-method="getInstance"/> </entry>
+				<entry key="RSA_PKCS"> <bean class="com.kona.kms.crypto.mech.MechRSA" factory-method="getInstance"/> </entry>
+				<entry key="RSA_X_509"> <bean class="com.kona.kms.crypto.mech.MechRSA" factory-method="getInstance"/> </entry>
+				<entry key="DES3_MAC"> <bean class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance"/> </entry>
+				<entry key="DES_MAC"> <bean class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance"/> </entry>
+				<entry key="SHA_1"> <bean class="com.kona.kms.crypto.mech.MechGeneric" factory-method="getInstance"/> </entry>
+				<entry key="MD5"> <bean class="com.kona.kms.crypto.mech.MechGeneric" factory-method="getInstance"/> </entry>
+-->
+<!-- DES, Double DES, TripleDes는 mechanisms을 TripleDes로  통일한다.-->
+				<entry key="DES_KEY_GEN"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES_KEY"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES_ECB"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES_CBC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES_MAC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 		 	factory-method="getInstance"/> </entry>
+				<entry key="DES2_KEY_GEN"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES2_ECB"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES2_CBC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES3_KEY_GEN"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES3_KEY"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES3_ECB"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES3_CBC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="DES3_MAC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 		 	factory-method="getInstance"/> </entry>
+				<entry key="SEED_KEY_GEN"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SEED_KEY"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SEED_ECB"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SEED_CBC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SEED_MAC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="AES_KEY_GEN"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="AES_KEY"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="AES_ECB"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="AES_CBC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="AES_MAC"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="RSA_PKCS_KEY_PAIR_GEN"> <bean class="com.kona.kms.crypto.mech.MechGeneric" 		factory-method="getInstance"/> </entry>
+				<entry key="RSA_PKCS_KEY"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 				factory-method="getInstance"/> </entry>
+				<entry key="RSA_PKCS"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 				factory-method="getInstance"/> </entry>
+				<entry key="RSA_X_509"> 	<bean class="com.kona.kms.crypto.mech.MechGeneric" 				factory-method="getInstance"/> </entry>
+				<entry key="SHA_1"> 		<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="MD5"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				
+				<!-- test for derive-->
+				<entry key="SHA1_KEY_DERIVATION"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SHA224_KEY_DERIVATION"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SHA256_KEY_DERIVATION"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SHA384_KEY_DERIVATION"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="SHA512_KEY_DERIVATION"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				
+				<entry key="XOR_BASE_AND_DATA"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="EXTRACT_KEY_FROM_KEY"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="CONCATENATE_BASE_AND_DATA"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="CONCATENATE_BASE_AND_KEY"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				<entry key="CONCATENATE_DATA_AND_BASE"> 			<bean class="com.kona.kms.crypto.mech.MechGeneric" 			factory-method="getInstance"/> </entry>
+				
+				<!-- com.kona.kms.crypto.mech.MechRSA -->
+				
+			</map>
+		</property>
+	</bean>
+<!--  
+	<bean id="tripleDes" class="com.kona.kms.crypto.mech.MechTripleDes" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+	<bean id="singleDes" class="com.kona.kms.crypto.mech.MechDes" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+	<bean id="seed" class="com.kona.kms.crypto.mech.MechSeed" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+	<bean id="mechAES" class="com.kona.kms.crypto.mech.MechAES" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+	<bean id="doubleDes" class="com.kona.kms.crypto.mech.MechDoubleDes" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+-->
+	<bean id="mechRSA" class="com.kona.kms.crypto.mech.MechRSA" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+	<bean id="mechGeneric" class="com.kona.kms.crypto.mech.MechGeneric" factory-method="getInstance">
+		<property name="provider" ref="cryptoManager" />
+	</bean>
+	
+	<bean id="msgManager" class="com.kona.kms.framework.MsgManager" factory-method="getInstance" />
+		
+	<bean id="keyMap" class="com.kona.kms.token.KeyMap" factory-method="getInstance" />
+	<bean id="tokenMap" class="com.kona.kms.token.TokenMap" factory-method="getInstance" />
+	
+		
+<!-- Job to send key profile info to TSM -->
+	<!-- 
+	<bean id="keyProfileUserJob" class="com.kona.kms.web.profile.quartz.KeyProfileJob" />
+	
+	<bean id="keyProfileJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="keyProfileUserJob" />  
+  		<property name="targetMethod" value="sendKeyProfileToTsm" />
+  		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="keyProfileTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">  
+	  <property name="jobDetail" ref="keyProfileJob" />  
+	  <property name="repeatInterval" value="3000" />  
+	  <property name="startDelay" value="10000" />  
+	</bean> 
+	
+	<bean id="certUserJob" class="com.kona.kms.web.cert.quartz.CertJob" />
+	
+	<bean id="certJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject" ref="certUserJob" />  
+  		<property name="targetMethod" value="sendCertificateToTsm" />
+  		<property name="concurrent" value="false" />
+	</bean>
+	
+	<bean id="certTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">  
+	  <property name="jobDetail" ref="certJob" />  
+	  <property name="repeatInterval" value="3000" />  
+	  <property name="startDelay" value="13000" />  
+	</bean> 
+	
+	<bean class="org.springframework.scheduling.quartz.SchedulerFactoryBean">  
+	  <property name="jobDetails">  
+	   <list>  
+	    <ref bean="keyProfileJob" />  
+	    <ref bean="certJob" />
+	   </list>  
+	  </property>  
+	  <property name="triggers">  
+	   <list>  
+	    <ref bean="keyProfileTrigger" /> 
+	    <ref bean="certTrigger" /> 
+	   </list>  
+	  </property>  
+	</bean>  -->  
+
+<!-- // Job to send key profile info to TSM -->
+</beans>

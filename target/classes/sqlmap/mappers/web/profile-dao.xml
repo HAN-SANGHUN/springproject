@@ -1,0 +1,522 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="profile">
+
+	<sql id="keyProfileList_find">
+		WHERE 1 = 1
+		<if test="companyID !='' and companyID != null">
+			AND com_id = '${companyID}'
+		</if>
+        <if test="companyName !='' and companyName != null">
+          AND com_id IN (select com_id from khm_com where com_name LIKE '%${companyName}%')
+        </if>
+        <!-- 
+        <if test="hsmLabel !='' and hsmLabel != null">
+          AND key_pf_ver     LIKE        '%${key_pf_ver}%'
+        </if>        
+        -->
+        <if test="tokenLabel !='' and tokenLabel != null">
+          AND com_id IN (select com_id from khm_ltoken where token_label LIKE '%${tokenLabel}%')
+        </if>
+        <if test="keyProfileID !='' and keyProfileID != null">
+          AND key_prof_id LIKE '%${keyProfileID}%'
+        </if>
+        <if test="keyProfileName !='' and keyProfileName != null">
+          AND key_prof_name LIKE '%${keyProfileName}%'
+        </if>
+        <if test="keyProfileVersion !='' and keyProfileVersion != null">
+          AND key_prof_ver LIKE '%${keyProfileVersion}%'
+        </if>
+        <if test="keyLabel !='' and keyLabel != null">
+           AND key_label LIKE '%${keyLabel}%'
+        </if>
+        <if test="keyTypeCode !='' and keyTypeCode != null">
+           AND key_type_cd = '${keyTypeCode}'
+        </if>        
+        <if test="keySubtypeCode !='' and keySubtypeCode != null">
+           AND key_subtp_cd = '${keySubtypeCode}'
+        </if>        
+        <if test="keyRoleCode !='' and keyRoleCode != null">
+        	AND key_role_cd='${keyRoleCode}'
+        </if>
+        <if test="activeStatusCode !='' and activeStatusCode != null">
+           AND atv_stats_cd = '${activeStatusCode}'
+        </if>        
+        <if test="periodType =='01'">
+           AND TO_CHAR(efft_start_dt, 'yyyy-MM-dd') BETWEEN NVL('${startDate}','1900-01-01') AND NVL('${endDate}','2999-12-31')
+        </if>
+        <if test="periodType =='02'">
+           AND TO_CHAR(efft_end_dt, 'yyyy-MM-dd') BETWEEN NVL('${startDate}','1900-01-01') AND NVL('${endDate}','2999-12-31')
+        </if>
+        <if test="periodType =='03'">
+           AND TO_CHAR(rev_dt, 'yyyy-MM-dd') BETWEEN NVL('${startDate}','1900-01-01') AND NVL('${endDate}','2999-12-31')
+        </if>        
+        <if test="testMode !='' and testMode != null">
+        	AND test_mode='${testMode}'
+        </if>               
+        <if test="keyValueFlag !='' and keyValueFlag != null">
+        	AND key_stats_cd='${keyValueFlag}'
+        </if>
+        <if test="keyUsageIndicatorValue != '' and keyUsageIndicatorValue != null">
+        	AND substr(key_usage_ind_val, 6, 1) = '${keyUsageIndicatorValue}'        	
+        </if>     
+        
+	</sql>
+		
+	<select id="getKeyProfileList" parameterType="com.kona.kms.web.profile.model.KeyProfileModel" resultType="com.kona.kms.web.profile.model.KeyProfileModel">
+		SELECT *
+		FROM (SELECT ROWNUM AS RNUM,
+			         b.*
+		      FROM (SELECT a.key_prof_id       as keyProfileID,
+		      			   a.key_prof_ver      as keyProfileVersion,
+		      			   a.com_id            as companyID,
+		      			   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,
+		      			   (select token_label from khm_ltoken t where t.com_id=a.com_id) as tokenLabel,		      			   
+		      			   a.key_prof_name     as keyProfileName,
+		      			   a.descr             as description,
+		      			   a.key_type_cd       as keyTypeCode,
+		      			   a.key_subject       as keySubject,
+		      			   a.key_subtp_cd      as keySubtypeCode,
+		      			   a.key_ver           as keyVersion,
+		      			   a.key_idfi          as keyIdentifier,
+		      			   a.key_def           as keyDefinition,
+		      			   a.key_role_cd       as keyRoleCode,
+		      			   a.key_index         as keyIndex,
+		      			   a.key_label         as keyLabel,
+		      			   a.key_size          as keySize,
+		      			   a.key_algorithm     as keyAlgorithm,
+		      			   a.key_usage_ind_val as keyUsageIndicatorValue,
+		      			   a.key_prof_xml_path as keyProfileXMLPath,
+		      			   a.efft_start_dt     as effectiveStartDate,
+		      			   a.efft_end_dt       as effectiveEndDate,
+		      			   a.expie_dt          as expireDate,
+		      			   a.rev_dt            as revocationDate,		      			   
+		      			   a.test_mode         as testMode,
+		      			   a.atv_stats_cd      as activeStatusCode,
+		      			   a.send_stats_cd     as sendStatusCode,
+		      			   a.key_stats_cd      as keyValueFlag,
+		      			   a.reg_user_id       as registrationUserID,
+		      			   a.reg_tmpst         as registrationDate,
+		      			   a.upd_user_id       as updateUserID,
+		      			   a.upd_tmpst         as updateDate
+		           FROM kky_prof a
+		           <include refid="keyProfileList_find" />
+		           ORDER BY ${sortname} ${sortorder}) b) c
+		WHERE c.RNUM BETWEEN #{startRowNum} AND #{endRowNum} 
+	</select>
+		
+	<select id="getTotalRecord" parameterType="com.kona.kms.web.profile.model.KeyProfileModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM kky_prof
+        <include refid="keyProfileList_find"/>
+	</select>
+	
+	<select id="getKeyProfileListAll" parameterType="com.kona.kms.web.profile.model.KeyProfileModel" resultType="com.kona.kms.web.profile.model.KeyProfileModel">
+		select 
+		   a.key_prof_id       as keyProfileID,
+		   a.key_prof_ver      as keyProfileVersion,
+		   a.errata_ver        as keyProfileErrataVersion,
+		   a.com_id            as companyID,
+		   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,
+		   (select token_label from khm_ltoken t where t.com_id=a.com_id) as tokenLabel,		      			   
+		   a.key_prof_name     as keyProfileName,
+		   a.descr             as description,
+		   a.key_type_cd       as keyTypeCode,
+		   a.key_subject       as keySubject,
+		   a.key_subtp_cd      as keySubtypeCode,
+		   a.key_ver           as keyVersion,
+		   a.key_idfi          as keyIdentifier,
+		   a.key_def           as keyDefinition,
+		   a.key_role_cd       as keyRoleCode,
+		   a.key_index         as keyIndex,
+		   a.key_label         as keyLabel,
+		   a.key_size          as keySize,
+		   a.key_algorithm     as keyAlgorithm,
+		   a.key_usage_ind_val as keyUsageIndicatorValue,
+		   a.key_prof_xml_path as keyProfileXMLPath,
+		   a.key_prof_xml_file as keyProfileXMLFile,
+		   a.efft_start_dt     as effectiveStartDate,
+		   a.efft_end_dt       as effectiveEndDate,
+		   a.expie_dt          as expireDate,
+		   a.rev_dt            as revocationDate,		   
+		   a.test_mode         as testMode,
+		   a.atv_stats_cd      as activeStatusCode,
+		   a.send_stats_cd     as sendStatusCode,
+		   a.key_stats_cd      as keyValueFlag,
+		   a.reg_user_id       as registrationUserID,
+		   a.reg_tmpst         as registrationDate,
+		   a.upd_user_id       as updateUserID,
+		   a.upd_tmpst         as updateDate			
+		from kky_prof a
+		<include refid="keyProfileList_find"/>
+		ORDER BY ${sortname} ${sortorder}
+	</select>
+	
+	<insert id="insertKeyProfile" parameterType="com.kona.kms.web.profile.model.KeyProfileModel">
+		<![CDATA[
+			insert into kky_prof(
+				key_prof_id,
+				key_prof_ver,
+				errata_ver,
+				com_id,
+				key_prof_name,
+				descr,
+				key_type_cd,
+				key_subject,
+				key_subtp_cd,
+				key_ver,
+				key_idfi,
+				key_def,
+				key_role_cd,
+				key_index,
+				key_label,
+				key_size,
+				key_algorithm,
+				key_usage_ind_val,
+				key_prof_xml_path,
+				key_prof_xml_file,				
+				efft_start_dt,
+				efft_end_dt,
+				expie_dt,
+				rev_dt,
+				test_mode,				
+				atv_stats_cd,	
+				key_stats_cd,			
+				send_stats_cd,				
+				reg_user_id,
+				reg_tmpst,
+				upd_user_id,
+				upd_tmpst				
+			) values (
+				#{keyProfileID},
+				#{keyProfileVersion},
+				#{keyProfileErrataVersion},
+				#{companyID},
+				#{keyProfileName},
+				#{description},
+				#{keyTypeCode},
+				#{keySubject},
+				#{keySubtypeCode},
+				#{keyVersion},
+				#{keyIdentifier},
+				#{keyDefinition},
+				#{keyRoleCode},
+				#{keyIndex},
+				#{keyLabel},
+				#{keySize},
+				#{keyAlgorithm},
+				#{keyUsageIndicatorValue},
+				#{keyProfileXMLPath},
+				#{keyProfileXMLFile},
+				
+				
+				#{effectiveStartDate},
+				#{effectiveEndDate},				
+				#{expireDate}, 
+				#{revocationDate}, 
+		
+				
+				
+				#{testMode},
+				#{activeStatusCode},
+				#{keyValueFlag},
+				#{sendStatusCode},
+				#{registrationUserID},
+				#{registrationDate},
+				#{updateUserID},
+				#{updateDate}				
+			)
+		]]>
+	</insert>
+	
+	<insert id="insertKeyProfileRevisionHistory" parameterType="com.kona.kms.web.profile.model.KeyProfileRevisionModel">
+		<selectKey resultType="long" keyProperty="sequence" order="BEFORE">
+			select key_profrev_seq.nextval from dual
+		</selectKey>
+		insert into kky_profrev(
+			profver_id,
+			key_prof_id,
+			key_prof_ver,
+			digest,
+			descr,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst
+		)values(
+			#{sequence},
+			#{keyProfileID},
+			#{keyProfileVersion},
+			#{digest},
+			#{description},
+			#{registrationUserID},
+			#{registrationDate},
+			#{updateUserID},
+			#{updateDate}
+		)
+	</insert>	
+	
+	<select id="getKeyProfileRevisionList" parameterType="java.util.Map" resultType="com.kona.kms.web.profile.model.KeyProfileRevisionModel">
+		select
+		    profver_id   as sequence,
+			key_prof_id  as keyProfileID,
+			key_prof_ver as keyProfileVersion,
+			digest       as digest,
+			descr        as description,
+			reg_user_id  as registrationUserID,
+			reg_tmpst    as registrationDate,
+			upd_user_id  as updateUserID,
+			upd_tmpst    as updateDate 
+		from kky_profrev
+		where key_prof_id=#{keyProfileID}
+		<![CDATA[
+		      and key_prof_ver < #{keyProfileVersion}
+		]]>
+	</select>	
+	
+	<delete id="deleteKeyProfileRevisionList" parameterType="string">
+		delete from kky_profrev
+		where key_prof_id=#{value}
+	</delete>
+	
+	<select id="getKeyProfile" parameterType="java.util.Map" resultType="com.kona.kms.web.profile.model.KeyProfileModel">
+		select 
+		   a.key_prof_id       as keyProfileID,
+		   a.key_prof_ver      as keyProfileVersion,
+		   a.errata_ver        as keyProfileErrataVersion,
+		   a.com_id            as companyID,
+		   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,
+		   (select token_label from khm_ltoken t where t.com_id=a.com_id) as tokenLabel,		      			   
+		   a.key_prof_name     as keyProfileName,
+		   a.descr             as description,
+		   a.key_type_cd       as keyTypeCode,
+		   a.key_subject       as keySubject,
+		   a.key_subtp_cd      as keySubtypeCode,
+		   a.key_ver           as keyVersion,
+		   a.key_idfi          as keyIdentifier,
+		   a.key_def           as keyDefinition,
+		   a.key_role_cd       as keyRoleCode,
+		   a.key_index         as keyIndex,
+		   a.key_label         as keyLabel,
+		   a.key_size          as keySize,
+		   a.key_algorithm     as keyAlgorithm,
+		   a.key_usage_ind_val as keyUsageIndicatorValue,
+		   a.key_prof_xml_path as keyProfileXMLPath,
+		   a.key_prof_xml_file as keyProfileXMLFile,
+		   a.efft_start_dt     as effectiveStartDate,
+		   a.efft_end_dt       as effectiveEndDate,
+		   a.expie_dt          as expireDate,
+		   a.rev_dt            as revocationDate,		   
+		   a.test_mode         as testMode,
+		   a.atv_stats_cd      as activeStatusCode,
+		   a.send_stats_cd     as sendStatusCode,
+		   a.key_stats_cd      as keyValueFlag,
+		   a.reg_user_id       as registrationUserID,
+		   a.reg_tmpst         as registrationDate,
+		   a.upd_user_id       as updateUserID,
+		   a.upd_tmpst         as updateDate			
+		from kky_prof a
+		where a.key_prof_id=#{keyProfileID}
+		<if test="keyProfileVersion != null">
+		      and a.key_prof_ver=#{keyProfileVersion}
+		</if>
+	</select>
+	
+	<select id="getPairKeyProfiles" parameterType="string" resultType="com.kona.kms.web.profile.model.KeyProfileModel">
+		select 
+		   a.key_prof_id       as keyProfileID,
+		   a.key_prof_ver      as keyProfileVersion,
+		   a.errata_ver        as keyProfileErrataVersion,
+		   a.com_id            as companyID,
+		   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,
+		   (select token_label from khm_ltoken t where t.com_id=a.com_id) as tokenLabel,		      			   
+		   a.key_prof_name     as keyProfileName,
+		   a.descr             as description,
+		   a.key_type_cd       as keyTypeCode,
+		   a.key_subject       as keySubject,
+		   a.key_subtp_cd      as keySubtypeCode,
+		   a.key_ver           as keyVersion,
+		   a.key_idfi          as keyIdentifier,
+		   a.key_def           as keyDefinition,
+		   a.key_role_cd       as keyRoleCode,
+		   a.key_index         as keyIndex,
+		   a.key_label         as keyLabel,
+		   a.key_size          as keySize,
+		   a.key_algorithm     as keyAlgorithm,
+		   a.key_usage_ind_val as keyUsageIndicatorValue,
+		   a.key_prof_xml_path as keyProfileXMLPath,
+		   a.key_prof_xml_file as keyProfileXMLFile,
+		   a.efft_start_dt     as effectiveStartDate,
+		   a.efft_end_dt       as effectiveEndDate,
+		   a.expie_dt          as expireDate,
+		   a.rev_dt            as revocationDate,		   
+		   a.test_mode         as testMode,
+		   a.atv_stats_cd      as activeStatusCode,
+		   a.send_stats_cd     as sendStatusCode,
+		   a.key_stats_cd      as keyValueFlag,
+		   a.reg_user_id       as registrationUserID,
+		   a.reg_tmpst         as registrationDate,
+		   a.upd_user_id       as updateUserID,
+		   a.upd_tmpst         as updateDate			
+		from kky_prof a
+		where a.key_subject=#{value}
+	</select>	
+	
+	<update id="updateKeyProfile" parameterType="com.kona.kms.web.profile.model.KeyProfileModel">
+		UPDATE	kky_prof
+		SET		com_id            = #{companyID},
+				key_prof_name     = #{keyProfileName},
+				key_subtp_cd      = #{keySubtypeCode},
+			   	key_ver           = #{keyVersion},
+			   	key_idfi          = #{keyIdentifier},
+			   	key_def           = #{keyDefinition},
+			   	key_role_cd       = #{keyRoleCode},
+			   	key_index         = #{keyIndex},
+			   	key_label         = #{keyLabel},
+			   	key_size          = #{keySize},
+			   	key_algorithm     = #{keyAlgorithm},
+		        descr             = #{description},
+		        key_usage_ind_val = #{keyUsageIndicatorValue},
+		   		key_prof_xml_path = #{keyProfileXMLPath},
+		   		key_prof_xml_file = #{keyProfileXMLFile},
+		        efft_start_dt     = #{effectiveStartDate},
+		        efft_end_dt       = #{effectiveEndDate},
+		        rev_dt            = #{revocationDate},		   
+		        test_mode         = #{testMode},		        
+				atv_stats_cd      = #{activeStatusCode},
+				upd_user_id       = #{updateUserID}, 
+				upd_tmpst         = #{updateDate}
+		where key_prof_id=#{keyProfileID}
+		      and key_prof_ver=#{keyProfileVersion}
+	</update>
+	
+	<update id="deleteKeyProfile" parameterType="com.kona.kms.web.profile.model.KeyProfileModel">
+		UPDATE	kky_prof
+		SET		atv_stats_cd = #{activeStatusCode},
+				upd_user_id = #{updateUserID}, 
+				upd_tmpst = #{updateDate}
+		where key_prof_id=#{keyProfileID}
+		      and key_prof_ver=#{keyProfileVersion}
+	</update>
+	
+	<delete id="deleteKeyProfilePermanant" parameterType="java.util.Map">
+		delete from kky_prof
+		where
+		<choose>
+			<when test="keyTypeCode=='SECRET'">				
+				key_prof_id=#{keyProfileID}
+			</when>
+			<otherwise>				
+				key_subject=#{keySubject}
+			</otherwise>
+		</choose>
+	</delete>
+	
+	<update id="updateKeyValue" parameterType="com.kona.kms.web.profile.model.KeyProfileModel">
+		update kky_prof set
+			   key_prof_xml_file = #{keyProfileXMLFile},
+			   key_stats_cd      = #{keyValueFlag},
+			   upd_user_id       = #{updateUserID}, 
+			   upd_tmpst         = #{updateDate}
+		where key_prof_id=#{keyProfileID}
+		      and key_prof_ver=#{keyProfileVersion}
+	</update>
+	
+	<update id="updateTransferFlag" parameterType="com.kona.kms.web.profile.model.KeyProfileModel">
+		update kky_prof set
+			   send_stats_cd = 'Y'
+		where key_prof_id=#{keyProfileID}
+		      and key_prof_ver=#{keyProfileVersion}
+	</update>
+	
+	<select id="checkKeyLabelUnique" parameterType="string" resultType="int">
+		select count(*)
+		from kky_prof
+		where key_label=#{value}
+	</select>
+	
+	<select id="checkKeyIndexUnique" parameterType="int" resultType="int">
+		select count(*)
+		from kky_prof
+		where key_index=#{value}
+	</select>
+	
+	<select id="getKeyProfileSequence" resultType="String">
+		SELECT lpad( trim(to_char(KEY_PROF_SEQ.NEXTVAL,'XXXXXXXX')), 8, '0')   AS profileID FROM DUAL
+	</select>
+	
+	<delete id="deleteKeyProfileJob" parameterType="String">
+		delete from kky_prof_send
+		where key_subject=#{value}
+	</delete>
+	
+	<update id="logTransferException" parameterType="com.kona.kms.web.profile.model.KeyProfileJobModel">
+		update kky_prof_send set
+		       try_cnt     = #{tryCount},
+			   description = #{description},
+			   upd_user_id = #{updateUserID},
+			   upd_tmpst =   #{updateDate}
+		where seq=#{sequence}
+	</update>
+	
+	<insert id="insertKeyProfileJob" parameterType="com.kona.kms.web.profile.model.KeyProfileJobModel">
+		<selectKey resultType="long" keyProperty="sequence" order="BEFORE">
+			select prof_tsm_seq.nextval from dual
+		</selectKey>
+		insert into kky_prof_send(
+			seq,
+			key_prof_id,
+			key_prof_ver,
+			key_type_cd,
+			key_subject,
+			try_cnt,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst
+		)values(
+			#{sequence},
+			#{keyProfileID},
+			#{keyProfileVersion},
+			#{keyTypeCode},
+			#{keySubject},
+			#{tryCount},
+			#{registrationUserID},
+			#{registrationDate},
+			#{updateUserID},
+			#{updateDate}
+		)
+	</insert>	
+	
+	<select id="getKeyProfilesToTransfer" resultType="com.kona.kms.web.profile.model.KeyProfileJobModel">
+		<![CDATA[
+		select seq          as sequence,
+			   key_prof_id  as keyProfileID,
+			   key_prof_ver as keyProfileVersion,
+			   key_type_cd  as keyTypeCode,
+			   key_subject  as keySubject,
+			   try_cnt      as tryCount,
+			   description  as description
+		from kky_prof_send
+		where try_cnt < 3
+		]]>
+	</select>
+	
+	<select id="getKeyProfileToTransfer" parameterType="java.util.Map" resultType="com.kona.kms.web.profile.model.KeyProfileJobModel">
+		<![CDATA[
+		select seq          as sequence,
+			   key_prof_id  as keyProfileID,
+			   key_prof_ver as keyProfileVersion,
+			   key_type_cd  as keyTypeCode,
+			   key_subject  as keySubject,
+			   try_cnt      as tryCount,
+			   description  as description
+		from kky_prof_send
+		where key_prof_id=#{keyProfileID}
+		      and key_prof_ver=#{keyProfileVersion}
+		]]>
+	</select>
+	
+</mapper>

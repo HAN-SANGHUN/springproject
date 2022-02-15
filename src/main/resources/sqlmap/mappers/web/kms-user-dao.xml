@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="user">
+
+	<sql id="userList_find">
+		WHERE 1 = 1
+        <if test="companyId !='' and companyId != null">
+          AND com_id = '${companyId}'
+        </if>
+        <if test="userId !='' and userId != null">
+          AND user_id = '${userId}'
+        </if>
+        <if test="userName !='' and userName != null">
+          AND user_name LIKE '%${userName}%'
+        </if>
+        <if test="userRoleCode !='' and userRoleCode != null">
+          AND user_role_cd = '${userRoleCode}'
+        </if>
+         <if test="activeStatusCode !='' and activeStatusCode != null">
+          AND user_atv_stats_cd = '${activeStatusCode}'
+        </if>
+        <if test="companyId !='' and companyId != null">
+          AND com_id LIKE '%${companyId}%'
+        </if>
+        <if test="companyName !='' and companyName != null">
+          AND com_id IN (select com_id from khm_com where com_name LIKE '%${companyName}%')
+        </if>
+        <if test="tokenLabel !='' and tokenLabel != null">
+          AND com_id IN (select com_id from khm_ltoken where token_label LIKE '%${tokenLabel}%')
+        </if>
+	</sql>
+
+	<select id="getKmsUserList" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel" resultType="com.kona.kms.web.ss.user.model.KmsUserModel">
+		SELECT *
+		FROM (	SELECT 	ROWNUM AS RNUM,
+			         	b.*
+				FROM (	SELECT	user_id 				as userId,
+								user_pwd 				as userPwd,
+		      					com_id					as companyId,
+		      					(select com_name from khm_com m where m.com_id=a.com_id) as companyName,
+		      					(select token_label from khm_ltoken n where n.com_id=a.com_id) as tokenLabel,
+		      					user_atv_stats_cd		as activeStatusCode,
+		      					user_acct_status_cd		as acountStatusCode,
+								user_role_cd			as userRoleCode,
+		      					user_name				as userName,
+		      					user_email				as email,
+		      					ofc_tel_no				as officeTelNum,
+		      					cel_tel_no				as cellphoneNum,
+								addr					as address,
+								dept					as department,
+								dsgn					as designation,
+								descr					as description,
+								login_ipadd				as loginIPAddress,
+								reg_user_id				as registrationUserId,
+								reg_tmpst				as registrationDate,
+								upd_user_id				as updateUserId,
+								upd_tmpst				as updateDate
+						FROM	khm_user a
+						<include refid="userList_find" />
+						ORDER BY ${sortname} ${sortorder}
+						) b) c
+		WHERE c.RNUM BETWEEN #{startRowNum} AND #{endRowNum} 		
+	</select>
+
+	<select id="getTotalRecord" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM khm_user
+        <include refid="userList_find"/>
+	</select>
+	
+	<select id="getKmsUserListAll" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel" resultType="com.kona.kms.web.ss.user.model.KmsUserModel">
+		SELECT	user_id 				as userId,
+				user_pwd 				as userPwd,
+    			com_id					as companyId,
+    			(select com_name from khm_com m where m.com_id=a.com_id) as companyName,
+    			(select token_label from khm_ltoken n where n.com_id=a.com_id) as tokenLabel,
+    			user_atv_stats_cd		as activeStatusCode,
+    			user_acct_status_cd		as acountStatusCode,
+				user_role_cd			as userRoleCode,
+    			user_name				as userName,
+    			user_email				as email,
+    			ofc_tel_no				as officeTelNum,
+    			cel_tel_no				as cellphoneNum,
+				addr					as address,
+				dept					as department,
+				dsgn					as designation,
+				descr					as description,
+				login_ipadd				as loginIPAddress,
+				reg_user_id				as registrationUserId,
+				reg_tmpst				as registrationDate,
+				upd_user_id				as updateUserId,
+				upd_tmpst				as updateDate
+		FROM	khm_user a
+		<include refid="userList_find" />
+		ORDER BY ${sortname} ${sortorder}
+	</select>
+	
+	<select id="getKmsUser" parameterType="String" resultType="com.kona.kms.web.ss.user.model.KmsUserModel"> 
+		SELECT 	user_id 				as userId,
+				user_pwd 				as userPwd,
+				com_id					as companyId,
+				(select com_name from khm_com m where m.com_id=a.com_id) as companyName,
+				(select token_label from khm_ltoken n where n.com_id=a.com_id) as tokenLabel,
+				user_atv_stats_cd		as activeStatusCode,
+				user_acct_status_cd		as acountStatusCode,
+				user_role_cd			as userRoleCode,
+				user_name				as userName,
+				user_email				as email,
+				ofc_tel_no				as officeTelNum,
+				cel_tel_no				as cellphoneNum,
+				addr					as address,
+				dept					as department,
+				dsgn					as designation,
+				descr					as description,
+				login_ipadd				as loginIPAddress,
+				reg_user_id				as registrationUserId,
+				reg_tmpst				as registrationDate,
+				upd_user_id				as updateUserId,
+				upd_tmpst				as updateDate
+		FROM	khm_user a
+		WHERE user_id = #{userId}
+	</select>	
+
+	<insert id="insertKmsUser" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel">
+		INSERT INTO khm_user (
+			user_id,
+			user_pwd,
+			com_id,			
+			user_atv_stats_cd,
+			user_acct_status_cd,
+			user_role_cd,
+			user_name,
+			user_email,
+			ofc_tel_no,
+			cel_tel_no,
+			addr,
+			dept,
+			dsgn,
+			descr,
+			login_ipadd,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst)
+        VALUES (
+        	#{userId},
+        	#{userPwd},
+        	#{companyId},
+        	#{activeStatusCode},
+        	#{acountStatusCode},
+        	#{userRoleCode},
+        	#{userName},
+        	#{email},
+        	#{officeTelNum},
+			#{cellphoneNum},
+        	#{address},
+        	#{department},
+        	#{designation},        	        	
+        	#{description},        	
+        	#{loginIPAddress},
+			#{registrationUserId},
+        	#{registrationDate}, 
+        	#{updateUserId}, 
+        	#{updateDate}) 
+	</insert>
+
+	<!-- JERRY: user_atv_stats_cd 의 값 0 을 config 로 바꿀것 -->
+	<update id="deleteKmsUser" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel">
+		UPDATE	khm_user
+		SET		user_atv_stats_cd = #{activeStatusCode},
+				upd_user_id = #{updateUserId}, 
+				upd_tmpst = #{updateDate}
+		WHERE 	user_id = #{userId}
+	</update>
+	
+	<update id="deleteKmsUsers" parameterType="java.util.Map">
+		UPDATE	khm_user
+		SET		user_atv_stats_cd = 'Inactive',
+				upd_user_id = #{updateUserId}, 
+				upd_tmpst = #{updateDate}
+		WHERE 	com_id = #{companyID}
+	</update>
+	
+	<update id="setKmsUserStatus" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel">
+		UPDATE	khm_user
+		SET		user_atv_stats_cd = #{activeStatusCode},
+				upd_user_id = #{updateUserId}, 
+				upd_tmpst = #{updateDate}
+		WHERE 	user_id = #{userId}
+	</update>
+	
+	<select id="checkUserIDUnique" parameterType="string" resultType="int">
+		select count(*)
+		from khm_user
+		where user_id=#{userId}
+	</select>
+
+	<update id="updateKmsUser" parameterType="com.kona.kms.web.ss.user.model.KmsUserModel">
+		UPDATE khm_user
+		SET com_id = #{companyId},
+			user_pwd = #{userPwd},
+			user_atv_stats_cd = #{activeStatusCode},
+			user_acct_status_cd = #{acountStatusCode},
+			user_role_cd = #{userRoleCode},
+			user_name = #{userName},
+			user_email = #{email},
+			ofc_tel_no = #{officeTelNum},
+			cel_tel_no = #{cellphoneNum},
+			addr = #{address},
+			dept = #{department},
+			dsgn = #{designation},
+			descr = #{description},
+			login_ipadd = #{loginIPAddress},	
+			upd_user_id = #{updateUserId}, 
+			upd_tmpst = #{updateDate}
+		WHERE user_id = #{userId}
+	</update>
+
+	<select id="checkKmsManagerRegistered" resultType="int">
+		select count(*)
+		from khm_user
+		where user_role_cd='KMS Manager'
+	</select>
+	
+</mapper>

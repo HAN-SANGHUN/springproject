@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WARNING: This file has been updated into version 1.1.1 in order to enable compilation of GP Messaging 1.2.0.
+Modifications are temporary modification: to be handled by the System Committee -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gp="http://namespaces.globalplatform.org/systems-profiles/1.1.2" targetNamespace="http://namespaces.globalplatform.org/systems-profiles/1.1.2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.Common.xsd"/>
+	<xsd:element name="ApplicationInfo">
+		<xsd:annotation>
+			<xsd:documentation>Contains all the general information about the application.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Privileges"/>
+				<xsd:element ref="gp:LifeCycles"/>
+			</xsd:sequence>
+			<xsd:attribute name="Version" type="gp:version" use="required"/>
+			<xsd:attribute name="Type" type="gp:application" use="required"/>
+			<xsd:attribute name="Subtype" type="gp:applicationsubtype" use="required"/>
+			<xsd:attribute name="Owner" type="xsd:string" use="required"/>
+			<xsd:attribute name="Developer" type="xsd:string" use="required"/>
+			<xsd:attribute name="Provider" type="xsd:string" use="required"/>
+			<xsd:attribute name="Domain" type="xsd:string" use="required"/>
+			<xsd:attribute name="VolatileDataSpaceMin" type="xsd:integer" use="required"/>
+			<xsd:attribute name="NonVolatileDataSpaceMin" type="xsd:integer" use="required"/>
+			<xsd:attribute name="VolatileDataSpaceMax" type="xsd:integer"/>
+			<xsd:attribute name="NonVolatileDataSpaceMax" type="xsd:integer"/>
+			<xsd:attribute name="AppSpecificInstallParams" type="xsd:hexBinary"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ApplicationProfile">
+		<xsd:annotation>
+			<xsd:documentation>The parent or root element of an Application Profile.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:Revisions"/>
+				<xsd:element ref="gp:ConflictRules"/>
+				<xsd:element ref="gp:ApplicationInfo"/>
+				<xsd:element ref="gp:Key" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:DataElement" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:Function" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:SecureChannel" minOccurs="0"/>
+				<xsd:element ref="gp:ScriptFragment" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="UniqueID" type="gp:uniqueID" use="required"/>
+			<xsd:attribute name="ProfileVersion" type="gp:version" use="required"/>
+			<xsd:attribute name="ErrataVersion" type="xsd:integer" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CloseSecureChannel">
+		<xsd:annotation>
+			<xsd:documentation>Script for closing a secure channel when the application is a Security Domain.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:KeyDeclaration" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:Script"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="DataElement">
+		<xsd:annotation>
+			<xsd:documentation>Externally provided parameters and data used by the scripts defined for this application.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="Label" type="xsd:string" use="optional"/>
+			<xsd:attribute name="External" type="xsd:boolean" use="required"/>
+			<xsd:attribute name="Type" type="gp:dataType" use="required"/>
+			<xsd:attribute name="Encoding" type="gp:encoding" use="optional"/>
+			<xsd:attribute name="FixedLength" type="xsd:boolean"/>
+			<xsd:attribute name="Length" type="xsd:integer"/>
+			<xsd:attribute name="Value" type="xsd:string"/>
+			<xsd:attribute name="Tag" type="xsd:hexBinary"/>
+			<xsd:attribute name="TagEncoding" type="gp:tagEncoding"/>
+			<xsd:attribute name="ReadWrite" type="xsd:boolean"/>
+			<xsd:attribute name="Update" type="xsd:boolean"/>
+			<xsd:attribute name="Optional" type="xsd:boolean"/>
+			<xsd:attribute name="MandatoryAudit" type="xsd:boolean"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Declaration">
+		<xsd:annotation>
+			<xsd:documentation>Minimum required parameters and data for the specific script fragment.  Also, provides a mechanism for overriding the default characteristics of the data element.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="External" type="xsd:boolean" use="required"/>
+			<xsd:attribute name="Encoding" type="xsd:string"/>
+			<xsd:attribute name="Value" type="xsd:string"/>
+			<xsd:attribute name="ReadWrite" type="xsd:boolean"/>
+			<xsd:attribute name="Update" type="xsd:string"/>
+			<xsd:attribute name="Optional" type="xsd:boolean"/>
+			<xsd:attribute name="MandatoryAudit" type="xsd:boolean"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Function">
+		<xsd:annotation>
+			<xsd:documentation>Application defined script functions which will be used by the script fragments.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:Script"/>
+			</xsd:sequence>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="Param" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Key">
+		<xsd:annotation>
+			<xsd:documentation>Specific key definition inheriting features of a specified Key Profile.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="ProfileID" type="gp:uniqueID" use="required"/>
+			<xsd:attribute name="External" type="xsd:boolean" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="KeyDeclaration">
+		<xsd:annotation>
+			<xsd:documentation>Information concerning where a key comes from for a particular script</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="External" type="xsd:boolean" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LifeCycle">
+		<xsd:annotation>
+			<xsd:documentation>Specific lifecycle information.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="Value" type="xsd:hexBinary"/>
+			<xsd:attribute name="Label" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LifeCycles">
+		<xsd:annotation>
+			<xsd:documentation>The supported lifecycle states.  Will include at a minimum the GlobalPlatform standard application lifecycle states.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:LifeCycle" minOccurs="3" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="OpenSecureChannel">
+		<xsd:annotation>
+			<xsd:documentation>Script for opening a secure channel when the application is a Security Domain.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:KeyDeclaration" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:Script"/>
+			</xsd:sequence>
+			<xsd:attribute name="Param" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Script">
+		<xsd:annotation>
+			<xsd:documentation>GlobalPlatform script code.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="ScriptFragment">
+		<xsd:annotation>
+			<xsd:documentation>Script fragment for one particular stage in the card customization process.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:ConflictRules" minOccurs="0"/>
+				<xsd:element ref="gp:Declaration" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:KeyDeclaration" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:Script"/>
+			</xsd:sequence>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="StartLifeCycle" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>Life cycle required to run this script</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="EndLifeCycle" type="xsd:string" use="required">
+				<xsd:annotation>
+					<xsd:documentation>New life cycle if no execution errors</xsd:documentation>
+				</xsd:annotation>
+			</xsd:attribute>
+			<xsd:attribute name="SecureChannel" type="gp:secureChannelProtocol" use="optional"/>
+			<xsd:attribute name="SecurityLevel" type="gp:securityLevel" use="optional"/>
+			<xsd:attribute name="Active" type="xsd:boolean"/>
+			<!-- WARNING: This simple type has been renamed from "secureChannel" to "secureChannelProtocol" in order to enable compilation of GP Messaging 1.2.0.
+			This is a temporary modification: to be handled by the System Committee -->
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="SecureChannel">
+		<xsd:annotation>
+			<xsd:documentation>Valid only if the application is a Security Domain.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:OpenSecureChannel" minOccurs="0"/>
+				<xsd:element ref="gp:CloseSecureChannel" minOccurs="0"/>
+				<xsd:element ref="gp:Wrap" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="SecureChannel" type="gp:secureChannelProtocol" use="required"/>
+			<xsd:attribute name="Option" type="xsd:hexBinary" use="optional"/>
+			<xsd:attribute name="SecurityLevel" type="gp:securityLevel" use="optional"/>
+			<!-- WARNING: This simple type has been renamed from "secureChannel" to "secureChannelProtocol" in order to enable compilation of GP Messaging 1.2.0.
+			This is a temporary modification: to be handled by the System Committee -->
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Wrap">
+		<xsd:annotation>
+			<xsd:documentation>Script for wrapping APDUs when the application is a Security Domain (or equivalent) for a general application.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:KeyDeclaration" minOccurs="0" maxOccurs="unbounded"/>
+				<xsd:element ref="gp:Script"/>
+			</xsd:sequence>
+			<xsd:attribute name="Param" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

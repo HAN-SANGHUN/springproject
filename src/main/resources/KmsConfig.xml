@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<KmsConfiguration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://namespaces.kona.com/kms-config/1.1.0">
+	<listenAddress ip="127.0.0.1" port="22002" />
+	<hsm machine="eracom" timeout="10" reconCnt="200" maxThread="200" />
+	<slotInfo>
+		<slot slotNum="0" slotPwd="16676F71AA9DBAA8AE0653E0995868F0" slotFreq="2" slotCount="1" >
+			<keyInfo type="SECRET_KEY" label="1212_TEST_2DES_KEY" mech="DES3" />
+			<keyInfo type="SECRET_KEY" label="DES_31" mech="DES" />
+			<keyInfo type="SECRET_KEY" label="SEED_11" mech="SEED" />
+			<keyInfo type="TEST_KEY" label="TEST" mech="TEST_MECH" />
+			<keyInfo type="PRIVATE_KEY" label="pri_1152" mech="RSA" />
+		</slot>
+		<slot slotNum="3" slotPwd="16676F71AA9DBAA8AE0653E0995868F0" slotFreq="2" slotCount="1" >
+			<keyInfo type="SECRET_KEY" label="1212_TEST_2DES_KEY" mech="DES3" />
+			<keyInfo type="SECRET_KEY" label="DES_31" mech="DES" />
+			<keyInfo type="SECRET_KEY" label="SEED_11" mech="SEED" />
+			<keyInfo type="TEST_KEY" label="TEST" mech="TEST_MECH" />
+			<keyInfo type="PRIVATE_KEY" label="pri_1152" mech="RSA" />
+		</slot>
+		<slot slotNum="6" slotPwd="16676F71AA9DBAA8AE0653E0995868F0" slotFreq="2" slotCount="1" >
+			<keyInfo type="SECRET_KEY" label="1212_TEST_2DES_KEY" mech="DES3" />
+			<keyInfo type="SECRET_KEY" label="DES_31" mech="DES" />
+			<keyInfo type="SECRET_KEY" label="SEED_11" mech="SEED" />
+			<keyInfo type="TEST_KEY" label="TEST" mech="TEST_MECH" />
+			<keyInfo type="PRIVATE_KEY" label="pri_1152" mech="RSA" />
+		</slot>
+		<slot slotNum="9" slotPwd="16676F71AA9DBAA8AE0653E0995868F0" slotFreq="2" slotCount="1" >
+			<keyInfo type="SECRET_KEY" label="1212_TEST_2DES_KEY" mech="DES3" />
+			<keyInfo type="SECRET_KEY" label="DES_31" mech="DES" />
+			<keyInfo type="SECRET_KEY" label="SEED_11" mech="SEED" />
+			<keyInfo type="TEST_KEY" label="TEST" mech="TEST_MECH" />
+			<keyInfo type="PRIVATE_KEY" label="pri_1152" mech="RSA" />
+		</slot>
+	</slotInfo>
+	<l4Info>
+		<l4 l4ip="127.0.0.1" />
+		<l4 l4ip="127.1.0.1" />
+		<l4 l4ip="127.2.0.1" />
+		<l4 l4ip="127.3.0.1" />
+	</l4Info>
+	<errInfo>
+		<errDef desc="trErr" code="TR00"/>
+		<errDef desc="trErrMode" code="MODE"/>
+		<errDef desc="trErrMech" code="MECH"/>
+		<errDef desc="trErrIntype" code="INPU"/>
+		<errDef desc="trErrOuttype" code="OUTP"/>
+		<errDef desc="trErrTrcode" code="CODE"/>
+		<errDef desc="trErrEnc" code="ENCR"/>
+		<errDef desc="trErrDec" code="DECR"/>
+		<errDef desc="trErrData" code="DATA"/>
+		<errDef desc="trErrIndex" code="INDE"/>
+		<errDef desc="trErrSign" code="SIGN"/>
+		<errDef desc="trErrVerify" code="VERI"/>
+		<errDef desc="trErrRsa" code="RSAE"/>
+	</errInfo>
+	<payload lenFldLen="4" trcodeFldLen="4" respCodeFldLen="4" fillerFldLen="32" />
+	<trInfo>
+		<trDesc trcode="TR1001" outType="1" outDataLen="4" />
+	</trInfo>
+</KmsConfiguration>

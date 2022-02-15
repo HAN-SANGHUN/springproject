@@ -1,0 +1,289 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WARNING: This file has been updated into version 1.1.1 in order to enable compilation of GP Messaging 1.2.0.
+Modifications are temporary modification: to be handled by the System Committee -->
+<xsd:schema xmlns:gp="http://namespaces.globalplatform.org/systems-profiles/1.1.2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://namespaces.globalplatform.org/systems-profiles/1.1.2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:element name="ConflictRule">
+		<xsd:annotation>
+			<xsd:documentation>General conflict rule representation.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Source" type="xsd:string" use="required"/>
+			<xsd:attribute name="Target" type="xsd:string" use="required"/>
+			<xsd:attribute name="Rule" type="gp:rule" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ConflictRules">
+		<xsd:annotation>
+			<xsd:documentation>Contains the rules which the profile must satisfy before being utilized.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:ConflictRule" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Description" type="xsd:string">
+		<xsd:annotation>
+			<xsd:documentation>General freeform container for description text fields.</xsd:documentation>
+		</xsd:annotation>
+	</xsd:element>
+	<xsd:element name="Privileges">
+		<xsd:annotation>
+			<xsd:documentation>GlobalPlatform standard application privileges.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="SecurityDomain" type="xsd:boolean"/>
+			<xsd:attribute name="DAPVerification" type="xsd:boolean"/>
+			<xsd:attribute name="DelegatedManagement" type="xsd:boolean"/>
+			<xsd:attribute name="CardManagerLock" type="xsd:boolean"/>  <!-- CardManagerLock is kept for backward compatibility. It is equivalent to the new CardLock -->
+			<xsd:attribute name="CardLock" type="xsd:boolean"/>  <!-- Added in version 1.1.2 of the XSD -->
+			<xsd:attribute name="CardTerminate" type="xsd:boolean"/>
+			<xsd:attribute name="DefaultSelected" type="xsd:boolean"/>  <!-- DefaultSelected is kept for backward compatibility. It is equivalent to the new CardReset -->
+			<xsd:attribute name="CardReset" type="xsd:boolean"/>  <!-- Added in version 1.1.2 of the XSD -->
+			<xsd:attribute name="CVMChange" type="xsd:boolean"/>  <!-- CVMChange is kept for backward compatibility. It is equivalent to the new CVMManagement -->
+			<xsd:attribute name="CVMManagement" type="xsd:boolean"/>  <!-- Added in version 1.1.2 of the XSD -->
+			<xsd:attribute name="ManadatedDAPVerification" type="xsd:boolean"/>
+			<!-- Added in version 1.1.2 of the XSD: -->
+			<xsd:attribute name="TrustedPath" type="xsd:boolean"/>
+			<xsd:attribute name="AuthorizedManagement" type="xsd:boolean"/>
+			<xsd:attribute name="TokenVerification" type="xsd:boolean"/>
+			<xsd:attribute name="GlobalDelete" type="xsd:boolean"/>
+			<xsd:attribute name="GlobalLock" type="xsd:boolean"/>
+			<xsd:attribute name="GlobalRegistry" type="xsd:boolean"/>
+			<xsd:attribute name="FinalApplication" type="xsd:boolean"/>
+			<xsd:attribute name="GlobalService" type="xsd:boolean"/>
+			<xsd:attribute name="ReceiptGeneration" type="xsd:boolean"/>
+			<xsd:attribute name="CipheredLoadFileDataBlock" type="xsd:boolean"/>
+			<xsd:attribute name="ContactlessActivation" type="xsd:boolean"/>
+			<xsd:attribute name="ContactlessSelfActivation" type="xsd:boolean"/>
+			<!-- End of Addition in version 1.1.2 of the XSD -->
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Revision">
+		<xsd:annotation>
+			<xsd:documentation>Specific revision information.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:Signature" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="ProfileID" type="gp:uniqueID"/>
+			<xsd:attribute name="Version" type="gp:version" use="required"/>
+			<xsd:attribute name="Date" type="xsd:date" use="required"/>
+			<xsd:attribute name="Time" type="xsd:time" use="required"/>
+			<xsd:attribute name="By" type="xsd:string" use="required"/>
+			<xsd:attribute name="Digest" type="xsd:hexBinary" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Revisions">
+		<xsd:annotation>
+			<xsd:documentation>Container for a list of revision notices.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Revision" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Signature">
+		<xsd:annotation>
+			<xsd:documentation>Signature for profile authentication purposes.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType/>
+	</xsd:element>
+	<xsd:simpleType name="version">
+		<xsd:annotation>
+			<xsd:documentation>GlobalPlatform specification version adhered to.  The scripting version must always match the profile version.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="\d\.\d\.\d"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="valueFormat">
+		<xsd:restriction base="xsd:NMTOKEN"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="kcvalgorithmtype">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="EIGHTZEROS"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="keypartalgorithm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="XOR"/>
+			<xsd:enumeration value="CONCATE"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- WARNING: This simple type has been renamed from "keytype" to "keyCategory" in order to enable compilation of GP Messaging 1.2.0.
+	This is a temporary modification: to be handled by the System Committee -->
+	<xsd:simpleType name="keyCategory">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="SECRET"/>
+			<xsd:enumeration value="PRIVATE"/>
+			<xsd:enumeration value="PUBLIC"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="keysubtype">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DES"/>
+			<xsd:enumeration value="RSA"/>
+			<xsd:enumeration value="RSACRT"/>
+			<xsd:enumeration value="EC"/>
+			<xsd:enumeration value="SEED"/>
+			<xsd:enumeration value="AES"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="tkalgorithm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CBC"/>
+			<xsd:enumeration value="ECB"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="mode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="TEST"/>
+			<xsd:enumeration value="PRODUCTION"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="componentName">
+		<xsd:restriction base="xsd:NMTOKEN"/>
+	</xsd:simpleType>
+	<!-- WARNING: This simple type has been renamed from "protocol" to "secureElementProtocol" in order to enable compilation of GP Messaging 1.2.0.
+	This is a temporary modification: to be handled by the System Committee -->
+	<xsd:simpleType name="secureElementProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="T0"/>
+			<xsd:enumeration value="T1"/>
+			<xsd:enumeration value="T14"/>
+			<xsd:enumeration value="TYPEA"/>
+			<xsd:enumeration value="TYPEB"/>
+			<xsd:enumeration value="OTHER"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="algorithm">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DES"/>
+			<xsd:enumeration value="3DES_3KEY"/>
+			<xsd:enumeration value="3DES_2KEY"/>
+			<xsd:enumeration value="DESX"/>
+			<xsd:enumeration value="RSA"/>
+			<xsd:enumeration value="DSA"/>
+			<xsd:enumeration value="OTHER"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="algoMode">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ECB"/>
+			<xsd:enumeration value="ECB_PAD"/>
+			<xsd:enumeration value="CBC"/>
+			<xsd:enumeration value="CBC_IV8"/>
+			<xsd:enumeration value="PUBLIC_KEY"/>
+			<xsd:enumeration value="PRIVATE_KEY"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="lengthType">
+		<xsd:restriction base="xsd:NMTOKENS">
+			<xsd:enumeration value="FIX"/>
+			<xsd:enumeration value="VAR"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="application">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="GP"/>
+			<xsd:enumeration value="MULTOS"/>
+			<xsd:enumeration value="W4SC"/>
+			<xsd:enumeration value="OTHER"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="applicationsubtype">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="CM"/>
+			<xsd:enumeration value="SD"/>
+			<xsd:enumeration value="APP"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="encoding">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="HEX"/>
+			<xsd:enumeration value="ASCII"/>
+			<xsd:enumeration value="BASE64"/>
+			<xsd:enumeration value="UTF8"/>
+			<xsd:enumeration value="CN"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="dataType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="ByteString"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- WARNING: This simple type has been renamed from "secureChannel" to "secureChannelProtocol" in order to enable compilation of GP Messaging 1.2.0.
+	This is a temporary modification: to be handled by the System Committee -->
+	<xsd:simpleType name="secureChannelProtocol">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="NONE"/>
+			<xsd:enumeration value="SCP01"/>
+			<xsd:enumeration value="SCP02"/>
+			<xsd:enumeration value="OTHER"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="securityLevel">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="C_MAC_R_MAC_C_DECRYPTION"/>
+			<xsd:enumeration value="C_MAC_R_MAC"/>
+			<xsd:enumeration value="C_MAC"/>
+			<xsd:enumeration value="C_MAC_C_DECRYPTION"/>
+			<xsd:enumeration value="R_MAC"/>
+			<xsd:enumeration value="NO_SECURE_MESSAGING"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="rule">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="=="/>
+			<xsd:enumeration value="!="/>
+			<xsd:enumeration value="&gt;"/>
+			<xsd:enumeration value="&lt;"/>
+			<xsd:enumeration value="&gt;="/>
+			<xsd:enumeration value="&lt;="/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="tagEncoding">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="DGI"/>
+			<xsd:enumeration value="EMV"/>
+			<xsd:enumeration value="L16"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="indexList" final="list">
+		<xsd:annotation>
+			<xsd:documentation>A list of index references</xsd:documentation>
+		</xsd:annotation>
+		<xsd:list itemType="gp:indexRef"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="indexRef" final="union">
+		<xsd:annotation>
+			<xsd:documentation>An index reference: an attribute name or #</xsd:documentation>
+		</xsd:annotation>
+		<xsd:union memberTypes="gp:numberSign xsd:NCName"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="numberSign" final="restriction">
+		<xsd:annotation>
+			<xsd:documentation>The # sign</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="#"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="arrayList" final="list">
+		<xsd:annotation>
+			<xsd:documentation>A list of array element names</xsd:documentation>
+		</xsd:annotation>
+		<xsd:list itemType="xsd:NCName"/>
+	</xsd:simpleType>
+	<xsd:simpleType name="uniqueID">
+		<xsd:restriction base="xsd:hexBinary"/>
+	</xsd:simpleType>
+</xsd:schema>

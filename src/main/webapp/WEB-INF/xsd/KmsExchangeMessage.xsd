@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
+	xmlns:gpm="http://namespaces.globalplatform.org/systems-messaging/2.1.0"
+	xmlns:gpp="http://namespaces.globalplatform.org/systems-profiles/1.1.2"
+	xmlns:tns="http://www.konai.com/KmsExchangeMessage"
+	targetNamespace="http://www.konai.com/KmsExchangeMessage">
+	
+	<xs:import namespace="http://namespaces.globalplatform.org/systems-profiles/1.1.2" schemaLocation="GP.systems.profiles.1.1.2.xsd"/>
+	<xs:import namespace="http://www.w3.org/2000/09/xmldsig#" schemaLocation="xmldsig-core-schema.xsd"/>
+	
+	<xs:simpleType name="KeyRole">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SD_KEY"/>
+			<xs:enumeration value="TRANSPORT_KEY"/>
+			<xs:enumeration value="ISSUERRSA_KEY"/>
+			<xs:enumeration value="APPLICATION_KEY"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="companyInfo">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="tns:companyID"/>
+				<xs:element name="companyName" type="xs:string"/>
+				<xs:element name="companyTypeCd" type="xs:string" minOccurs="0"/>
+				<xs:element name="countryCd" type="xs:string" minOccurs="0"/>
+				<xs:element name="fax" type="xs:string" minOccurs="0"/>
+				<xs:element name="email" type="xs:string"/>
+				<xs:element name="homepageURL" type="xs:string" minOccurs="0"/>
+				<xs:element name="address" type="xs:string" minOccurs="0"/>
+				<xs:element name="businessLicenseNo" type="xs:string" minOccurs="0"/>
+				<xs:element name="officeTelephoneNo" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="keyInfo">
+		<xs:annotation>
+			<xs:documentation>Contains all the general information about the application.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="gpp:KeyProfile"/>
+				<xs:element name="profileUniqueID" type="xs:string"/>
+				<xs:element name="profileVersion" type="xs:string"/>
+				<xs:element name="profileName" type="xs:string" minOccurs="0"/>
+				<xs:element name="desc" type="xs:string" minOccurs="0"/>
+				<xs:element name="keyRole" type="tns:KeyRole"/>
+				<xs:element name="keyName" type="xs:string" minOccurs="0"/>
+				<xs:element name="keyTypeCd" type="xs:string" minOccurs="0"/>
+				<xs:element name="keySubTypeCd" type="xs:string" minOccurs="0"/>
+				<xs:element name="keyVersion" type="xs:string" minOccurs="0"/>
+				<xs:element name="keyIdentfier" type="xs:string" minOccurs="0"/>
+				<xs:element name="pairProfileUniqueID" type="xs:string" minOccurs="0"/>
+				<xs:element name="pairProfileVersion" type="xs:string" minOccurs="0"/>
+				<xs:element name="keyKMSLabelName" type="xs:string" minOccurs="0"/>
+				<xs:element name="keySize" type="tns:KeySize" minOccurs="0"/>
+				<xs:element name="keyIndex" type="tns:KeyIndex" minOccurs="0"/>
+				<xs:element name="startDate" type="xs:string" minOccurs="0"/>
+				<xs:element name="endDate" type="xs:string" minOccurs="0"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="keyInfos">
+		<xs:annotation>
+			<xs:documentation>Contains all the general information about the application.</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element ref="tns:keyInfo" minOccurs="1" maxOccurs="2"/>
+				<xs:element ref="tns:companyID"/>
+				<xs:element name="workCode" type="tns:WorkCode"/>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+	
+	<xs:element name="companyID">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="40"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
+	<xs:element name="brandTypeCd" type="xs:string"/>
+	
+	<xs:element name="binNO">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="6"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+	
+	<xs:simpleType name="KeyIndex">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="999999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:element name="trackingNo">
+		<xs:simpleType>
+			<xs:restriction base="xs:string">
+				<xs:length value="20"/>
+			</xs:restriction>
+		</xs:simpleType>
+	</xs:element>
+
+	<xs:simpleType name="KeySize">
+		<xs:restriction base="xs:positiveInteger">
+			<xs:maxInclusive value="999999999"/>
+		</xs:restriction>
+	</xs:simpleType>
+
+	<xs:simpleType name="BinStatusCd">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="DRAFT"/>
+			<xs:enumeration value="USE"/>
+			<xs:enumeration value="DISPOSAL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="WorkCode">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="INSERT"/>
+			<xs:enumeration value="DELETE"/>
+			<xs:enumeration value="UPDATE"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<!-- root elements   -->
+	<xs:simpleType name="ResponseType">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SUCCESS"/>
+			<xs:enumeration value="ALREDY_REG"/>
+			<xs:enumeration value="FAIL"/>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:complexType name="KeyInfoRequestType">
+		<xs:sequence>
+			<xs:element ref="tns:keyInfos"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="CompanyRequestType">
+		<xs:sequence>
+			<xs:element ref="tns:companyInfo"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="KeyInfoRequest" type="tns:KeyInfoRequestType"/>
+	<xs:element name="KeyInfoResponse" type="tns:ResponseType"/>
+	
+	<xs:element name="CompanyInfoRequest" type="tns:CompanyRequestType"/>
+	<xs:element name="CompanyInfoResponse" type="tns:ResponseType"/>
+
+	<!-- Bin Certification mesage -->
+	<xs:complexType name="BINCertMessage" abstract="true">
+		<xs:sequence>
+			<xs:element ref="tns:companyID"/>
+			<xs:element ref="tns:brandTypeCd"/>
+			<xs:element ref="tns:binNO"/>
+			<xs:element name="issuerPublicKeyIndex" type="tns:KeyIndex"/>
+			<xs:element name="expireDate" type="xs:date"/>
+			<xs:element name="workCode" type="tns:WorkCode"/>
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:element name="RequestedBINCertification">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:BINCertMessage">
+					<xs:sequence>
+						<xs:element ref="tns:trackingNo"/>
+						<xs:element name="issuerPublicKeySize" type="tns:KeySize"/>
+						<xs:element name="certificationRequestFileName" type="xs:string"/>
+						<xs:element name="certificationRequestBinaryFile" type="xs:hexBinary"/>
+						<xs:element name="certificationRequestDate" type="xs:date"/>
+						<xs:element name="issuerPublicKeyExponentValue" type="xs:string"/>
+						<xs:element name="certificationHashValue">
+							<xs:simpleType>
+								<xs:restriction base="xs:string">
+									<xs:minLength value="1"/>
+									<xs:maxLength value="256"/>
+								</xs:restriction>
+							</xs:simpleType>
+						</xs:element>
+						<xs:element name="binStatus" type="tns:BinStatusCd"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RequestedBINCertificationResponse" type="tns:ResponseType"/>
+	
+	<xs:element name="RegisteredBINCertification">
+		<xs:complexType>
+			<xs:complexContent>
+				<xs:extension base="tns:BINCertMessage">
+					<xs:sequence>
+						<xs:element name="certificationResponseFileName" type="xs:string"/>
+						<xs:element name="certificationResponseBinaryFile" type="xs:hexBinary"/>
+						<xs:element name="certificationResponseDate" type="xs:date"/>
+						<xs:element name="caPublicKeySize" type="tns:KeySize"/>
+						<xs:element name="binStatus" type="tns:BinStatusCd"/>
+					</xs:sequence>
+				</xs:extension>
+			</xs:complexContent>
+		</xs:complexType>
+	</xs:element>
+	<xs:element name="RegisteredBINCertificationResponse" type="tns:ResponseType"/>
+</xs:schema>

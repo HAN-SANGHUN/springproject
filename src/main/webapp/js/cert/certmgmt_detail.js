@@ -1,0 +1,4 @@
+function download(){
+	
+	$("#fileFrm").submit();
+}

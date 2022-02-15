@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WARNING: This file has been updated into version 1.1.1 in order to enable compilation of GP Messaging 1.2.0.
+Modifications are temporary modification: to be handled by the System Committee -->
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:gp="http://namespaces.globalplatform.org/systems-profiles/1.1.2" targetNamespace="http://namespaces.globalplatform.org/systems-profiles/1.1.2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.Common.xsd"/>
+	<xsd:element name="Algorithm">
+		<xsd:annotation>
+			<xsd:documentation>Cryptographic functionality.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ApplicationInstance">
+		<xsd:annotation>
+			<xsd:documentation>Information about an application which is present on the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Privileges" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="ProfileID" type="gp:uniqueID" use="required"/>
+			<xsd:attribute name="Label" type="xsd:string"/>
+			<xsd:attribute name="AID" type="xsd:hexBinary" use="required"/>
+			<xsd:attribute name="LifeCycle" type="xsd:string" use="required"/>
+			<xsd:attribute name="SecurityDomain" type="xsd:hexBinary"/>
+			<xsd:attribute name="VolatileDataSpaceLimit" type="xsd:integer"/>
+			<xsd:attribute name="NonVolatileDataSpaceLimit" type="xsd:integer"/>
+			<xsd:attribute name="AppSpecificInstallParams" type="xsd:hexBinary"/>
+			<xsd:attribute name="Order" type="xsd:integer"/>
+			<xsd:attribute name="LoadFileID" type="xsd:hexBinary" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ApplicationInstances">
+		<xsd:annotation>
+			<xsd:documentation>Container for all the applications which are present on the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:ApplicationInstance" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CardInfo">
+		<xsd:annotation>
+			<xsd:documentation>Contains information about the smart card resources and application specific fields used to manage the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:ResourcesAvailable"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CardManufacturer">
+		<xsd:annotation>
+			<xsd:documentation>Information about the manufacturer of the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="PlasticStockID" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CardManufacturerProduct">
+		<xsd:annotation>
+			<xsd:documentation>Characteristics of the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:CardManufacturer"/>
+				<xsd:element ref="gp:Chip"/>
+				<xsd:element ref="gp:Platform"/>
+			</xsd:sequence>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="Version" type="gp:version" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CardProfile">
+		<xsd:annotation>
+			<xsd:documentation>Contains all the manufacturer provided information about the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:Revisions"/>
+				<xsd:element ref="gp:CardManufacturerProduct"/>
+				<xsd:element ref="gp:ConflictRules"/>
+				<xsd:element ref="gp:LoadFileInstances"/>
+				<xsd:element ref="gp:ApplicationInstances"/>
+				<xsd:element ref="gp:CardInfo"/>
+			</xsd:sequence>
+			<xsd:attribute name="UniqueID" type="gp:uniqueID" use="required"/>
+			<xsd:attribute name="ProfileVersion" type="gp:version" use="required"/>
+			<xsd:attribute name="ErrataVersion" type="xsd:integer" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Chip">
+		<xsd:annotation>
+			<xsd:documentation>Contains all the general information about the chip present on the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:Resources"/>
+				<xsd:element ref="gp:Powers"/>
+				<xsd:element ref="gp:Clock" minOccurs="0"/>
+				<xsd:element ref="gp:Communication"/>
+				<xsd:element ref="gp:CryptoEngine" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="Model" type="xsd:string" use="required"/>
+			<xsd:attribute name="Version" type="gp:version" use="required"/>
+			<xsd:attribute name="ChipManufacturer" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Clock">
+		<xsd:annotation>
+			<xsd:documentation>Clock speed support.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Unit" type="xsd:string" use="required"/>
+			<xsd:attribute name="Min" type="xsd:decimal" use="required"/>
+			<xsd:attribute name="Max" type="xsd:decimal" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Communication">
+		<xsd:annotation>
+			<xsd:documentation>Communication support for both contact and contactless smart cards.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Contact" minOccurs="0"/>
+				<xsd:element ref="gp:Contactless" minOccurs="0"/>
+			</xsd:sequence>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Contact">
+		<xsd:annotation>
+			<xsd:documentation>Information specific to contact smart cards.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Protocols"/>
+			</xsd:sequence>
+			<xsd:attribute name="PPS" type="xsd:boolean"/>
+			<xsd:attribute name="Unit" type="xsd:string"/>
+			<xsd:attribute name="BaudRateMin" type="xsd:integer"/>
+			<xsd:attribute name="BaudRateMax" type="xsd:integer"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Contactless">
+		<xsd:annotation>
+			<xsd:documentation>Information specific to contactless smart cards.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Protocols"/>
+			</xsd:sequence>
+			<xsd:attribute name="Unit" type="xsd:string"/>
+			<xsd:attribute name="BaudRateMin" type="xsd:integer"/>
+			<xsd:attribute name="BaudRateMax" type="xsd:integer"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="CryptoEngine">
+		<xsd:annotation>
+			<xsd:documentation>Describes characteristics of the cryptographic engine in terms of key type and algorithm support.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:KeyTypes"/>
+				<xsd:element ref="gp:Algorithm" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="xsd:string" use="required"/>
+			<xsd:attribute name="arrayIndex" type="xsd:string" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="KeyType">
+		<xsd:annotation>
+			<xsd:documentation>Characteristics of the key.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Name" type="xsd:string" use="required"/>
+			<xsd:attribute name="MaxLength" type="xsd:integer" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="KeyTypes">
+		<xsd:annotation>
+			<xsd:documentation>Placeholder element for one or more KeyTypes elements.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:KeyType" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LoadFileInstance">
+		<xsd:annotation>
+			<xsd:documentation>A load file which is installed on a smart card corresponding to the Card Profile.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="ProfileID" type="gp:uniqueID" use="required"/>
+			<xsd:attribute name="Label" type="xsd:string"/>
+			<xsd:attribute name="LifeCycle" type="xsd:string" use="required"/>
+			<xsd:attribute name="Masked" type="xsd:boolean" use="required"/>
+			<xsd:attribute name="SecurityDomainAid" type="xsd:hexBinary"/>
+			<xsd:attribute name="Order" type="xsd:integer"/>
+			<xsd:attribute name="NonVolatileCodeSpaceLimit" type="xsd:integer"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LoadFileInstances">
+		<xsd:annotation>
+			<xsd:documentation>Characteristics of a particular load file on the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:LoadFileInstance" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Platform">
+		<xsd:annotation>
+			<xsd:documentation>Platform supported by the chip.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Type" type="xsd:string" use="required"/>
+			<xsd:attribute name="Version" type="gp:version" use="required"/>
+			<xsd:attribute name="OSPlatform" type="xsd:string" use="required"/>
+			<xsd:attribute name="OSVersion" type="gp:version" use="required"/>
+			<xsd:attribute name="Implementor" type="xsd:string"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Power">
+		<xsd:annotation>
+			<xsd:documentation>Power support offered by the chip.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Unit" type="xsd:string" use="required"/>
+			<xsd:attribute name="Value" type="xsd:decimal" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Powers">
+		<xsd:annotation>
+			<xsd:documentation>Placeholder element for one or more Power elements.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Power" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Protocol">
+		<xsd:annotation>
+			<xsd:documentation>Protocol support offered by the chip.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Type" type="gp:secureElementProtocol" use="required"/>
+			<xsd:attribute name="MaxApduLen" type="xsd:integer" use="required"/>
+			<!-- WARNING: This simple type has been renamed from "protocol" to "secureElementProtocol" in order to enable compilation of GP Messagin 1.2.0.
+		This is a temporary modification: to be handled by the System Committee -->
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Protocols">
+		<xsd:annotation>
+			<xsd:documentation>Placeholder element for one or more Protocol elements.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Protocol" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Resources">
+		<xsd:annotation>
+			<xsd:documentation>Resources of the chip.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Unit" type="xsd:string" use="required"/>
+			<xsd:attribute name="ROM" type="xsd:integer" use="required"/>
+			<xsd:attribute name="RAM" type="xsd:integer" use="required"/>
+			<xsd:attribute name="EEPROM" type="xsd:integer" use="required"/>
+			<xsd:attribute name="Flash" type="xsd:integer" use="required"/>
+			<xsd:attribute name="GarbageCollection" type="xsd:boolean"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ResourcesAvailable">
+		<xsd:annotation>
+			<xsd:documentation>Resources remaining on the smart card.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Unit" type="xsd:string" use="required"/>
+			<xsd:attribute name="RAM" type="xsd:integer" use="required"/>
+			<xsd:attribute name="EEPROM" type="xsd:integer" use="required"/>
+			<xsd:attribute name="Flash" type="xsd:integer" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

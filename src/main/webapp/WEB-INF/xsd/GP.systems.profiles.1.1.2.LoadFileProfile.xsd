@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- WARNING: This file has been updated into version 1.1.1 in order to enable compilation of GP Messaging 1.2.0.
+Modifications are temporary modification: to be handled by the System Committee -->
+<xsd:schema xmlns:gp="http://namespaces.globalplatform.org/systems-profiles/1.1.2" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://namespaces.globalplatform.org/systems-profiles/1.1.2" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xsd:include schemaLocation="GP.systems.profiles.1.1.2.Common.xsd"/>
+	<xsd:annotation>
+		<xsd:documentation>General freeform container for description text fields.</xsd:documentation>
+	</xsd:annotation>
+	<xsd:element name="LoadFileInfo">
+		<xsd:annotation>
+			<xsd:documentation>General information about the load file.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="AID" type="xsd:hexBinary" use="required"/>
+			<xsd:attribute name="Version" type="gp:version" use="required"/>
+			<xsd:attribute name="NonVolatileCodeSpaceLimit" type="xsd:integer"/>
+			<xsd:attribute name="NonVolatileDataSpaceMin" type="xsd:integer"/>
+			<xsd:attribute name="VolatileDataSpaceMin" type="xsd:integer"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="LoadFileProfile">
+		<xsd:annotation>
+			<xsd:documentation>Parent or root element of Load File Profile.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+				<xsd:element ref="gp:Revisions"/>
+				<xsd:element ref="gp:ConflictRules"/>
+				<xsd:element ref="gp:LoadFileInfo"/>
+				<xsd:element ref="gp:Modules"/>
+				<xsd:element ref="gp:ApplicationCode" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="UniqueID" type="gp:uniqueID" use="required"/>
+			<xsd:attribute name="ProfileVersion" type="gp:version" use="required"/>
+			<xsd:attribute name="ErrataVersion" type="xsd:integer" use="optional"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Module">
+		<xsd:annotation>
+			<xsd:documentation>Information about individual modules within the load file.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Description" minOccurs="0"/>
+			</xsd:sequence>
+			<xsd:attribute name="ModuleID" type="xsd:hexBinary" use="required"/>
+			<xsd:attribute name="AID" type="xsd:hexBinary" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="Modules">
+		<xsd:annotation>
+			<xsd:documentation>Placeholder element for one or more Module elements.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:sequence>
+				<xsd:element ref="gp:Module" minOccurs="0" maxOccurs="unbounded"/>
+			</xsd:sequence>
+			<xsd:attribute name="arrayElement" type="gp:arrayList" use="required"/>
+			<xsd:attribute name="arrayIndex" type="gp:indexList" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+	<xsd:element name="ApplicationCode">
+		<xsd:annotation>
+			<xsd:documentation>The representation of the load file provided as the value of this element.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:complexType>
+			<xsd:attribute name="Encoding" type="gp:encoding" use="required"/>
+		</xsd:complexType>
+	</xsd:element>
+</xsd:schema>

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="tokenmap">
+	<resultMap id="PHSMModel_Result" type="com.kona.kms.token.model.PHSMModel">
+	    <id property="hsmNo" column="HSM_NO" />
+	    <result property="hsmLabel" column="LHSM_LABEL" />
+	    <result property="lhsmNo" column="LHSM_NO" />
+	    <result property="slotCount" column="SLOT_CNT" />
+	    <result property="slotStartNum" column="SLOT_START_NO" />
+	    <result property="slotEndNum" column="SLOT_END_NO" />
+	    <result property="ipAddress" column="HSM_IPADD" />
+	    <result property="port" column="HSM_PORT" />
+	    <result property="statusCode" column="HSM_STATS_CD" />
+	    <result property="description" column="HSM_PRIMARY_CD" />
+	    <result property="primaryCode" column="DESCR" />
+		<result property="regUserId" column="REG_USER_ID" />
+	    <result property="regTmpst" column="REG_TMPST" />
+	    <result property="updUserId" column="UPD_USER_ID" />
+	    <result property="updTmpst" column="UPD_TMPST" />
+	</resultMap>
+	<resultMap id="LTokenModel_Result" type="com.kona.kms.token.model.LTokenModel">
+	    <id property="tokenNo" column="TOKEN_NO" />
+	    <result property="tokenLabel" column="TOKEN_LABEL" />
+	    <result property="companyID" column="COM_ID" />
+	    <result property="lhsmNo" column="LHSM_NO" />
+	    <result property="tokenPin" column="TOKEN_PIN" />
+	    <result property="description" column="TOKEN_DESCR" />
+		<result property="regUserId" column="REG_USER_ID" />
+	    <result property="regTmpst" column="REG_TMPST" />
+	    <result property="updUserId" column="UPD_USER_ID" />
+	    <result property="updTmpst" column="UPD_TMPST" />
+	    <collection property="ptokenModel" column="tokenNo" ofType="com.kona.kms.token.model.PTokenModel" resultMap="PTokenModel_Result"/>
+	</resultMap>
+	<resultMap id="PTokenModel_Result" type="com.kona.kms.token.model.PTokenModel">
+	    <result property="slotIndex" column="SLOT_INDEX" />
+	    <result property="hsmNo" column="HSM_NO" />
+	    <result property="slotNo" column="SLOT_NO" />
+	    <result property="slotStatusCode" column="SLOT_STATS_CD" />
+	    <result property="tokenNo" column="TOKEN_NO" />
+		<result property="regUserId" column="REG_USER_ID" />
+	    <result property="regTmpst" column="REG_TMPST" />
+	    <result property="updUserId" column="UPD_USER_ID" />
+	    <result property="updTmpst" column="UPD_TMPST" />
+	</resultMap>
+	<resultMap id="LHSMModel_Result" type="com.kona.kms.token.model.LHSMModel">
+	    <id property="lhsmNo" column="LHSM_NO" />
+	    <result property="lhsmLabel" column="LHSM_LABEL" />
+	    <result property="phsmCnt" column="PHSM_CNT" />
+	    <result property="ltokenCnt" column="LTOKEN_CNT" />
+	    <result property="ltokenStartNo" column="LTOKEN_START_NO" />
+	    <result property="ltokenEndNo" column="LTOKEN_END_NO" />
+	   	<collection property="phsmModel" column="lhsmNo" ofType="com.kona.kms.token.model.PHSMModel" resultMap="PHSMModel_Result"/>
+	    <collection property="ltokenModel" column="lhsmNo" ofType="com.kona.kms.token.model.LTokenModel" resultMap="LTokenModel_Result"/>
+	</resultMap>
+	<select id="getTokenMapInfo" parameterType="com.kona.kms.token.model.LHSMModel" resultMap="LHSMModel_Result">
+		SELECT 	lhsm.LHSM_NO		AS	LHSM_NO,
+				lhsm.LHSM_LABEL 	AS 	LHSM_LABEL,
+				lhsm.PHSM_CNT		AS	PHSM_CNT,
+				lhsm.LTOKEN_CNT		AS	LTOKEN_CNT,
+			    lhsm.LTOKEN_START_NO AS LTOKEN_START_NO,
+				lhsm.LTOKEN_END_NO 	AS 	LTOKEN_END_NO,
+				phsm.HSM_NO			AS	HSM_NO,
+				phsm.HSM_LABEL  	AS	HSM_LABEL,
+				phsm.SLOT_CNT		AS	SLOT_CNT,
+				phsm.SLOT_START_NO	AS	SLOT_START_NO,
+				phsm.SLOT_END_NO	AS	SLOT_END_NO,
+				phsm.HSM_IPADD		AS	HSM_IPADD,
+				phsm.HSM_PORT		AS	HSM_PORT,
+        		ltoken.TOKEN_NO		AS	TOKEN_NO,
+				ltoken.TOKEN_LABEL	AS	TOKEN_LABEL,
+				ltoken.COM_ID		AS	COM_ID,
+				ltoken.TOKEN_PIN	AS	TOKEN_PIN,
+				ptoken.HSM_NO		AS	LHSM_NO,
+				ptoken.SLOT_NO		AS	SLOT_NO,
+				ptoken.SLOT_INDEX	AS  SLOT_INDEX				
+		FROM	KHM_LHSM lhsm,  KHM_PHSM phsm, KHM_LTOKEN ltoken, KHM_PTOKEN ptoken
+    	WHERE 	lhsm.LHSM_NO = phsm.LHSM_NO
+      	AND 	lhsm.LHSM_NO = ltoken.LHSM_NO 
+		AND 	ltoken.TOKEN_NO = ptoken.TOKEN_NO
+		AND		phsm.HSM_NO  = ptoken.HSM_NO
+		ORDER BY  lhsm.LHSM_NO asc , ltoken.TOKEN_NO asc , ptoken.SLOT_INDEX asc                          
+	</select>
+</mapper>

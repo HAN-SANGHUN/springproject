@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	
+	
+	<bean id="keyManager" class="com.kona.kms.code.CodeManager" factory-method="getInstance" >
+	
+		<!-- Key Type Code -->
+		<property name="keyTypes">
+			<list>
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="SECRET"/>
+					<constructor-arg index="1" value="Secret Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="PAIRKEY"/>
+					<constructor-arg index="1" value="Pair Key"/>
+				</bean>
+			</list>
+		</property>
+		
+		<!-- Key Subtype Code -->
+		<property name="keySubtypes">
+			<map>
+				<entry key="SECRET">
+					<list>
+						<bean class="com.kona.kms.code.CodePair" scope="prototype">
+							<constructor-arg index="0" value="DES"/>
+							<constructor-arg index="1" value="DES"/>
+						</bean>
+						<bean class="com.kona.kms.code.CodePair" scope="prototype">
+							<constructor-arg index="0" value="SEED"/>
+							<constructor-arg index="1" value="SEED"/>
+						</bean>
+						<bean class="com.kona.kms.code.CodePair" scope="prototype">
+							<constructor-arg index="0" value="AES"/>
+							<constructor-arg index="1" value="AES"/>
+						</bean>
+					</list>
+				</entry>
+				<entry key="PAIRKEY">
+					<list>
+						<bean class="com.kona.kms.code.CodePair" scope="prototype">
+							<constructor-arg index="0" value="RSA"/>
+							<constructor-arg index="1" value="RSA"/>
+						</bean>
+						<bean class="com.kona.kms.code.CodePair" scope="prototype">
+							<constructor-arg index="0" value="RSACRT"/>
+							<constructor-arg index="1" value="RSACRT"/>
+						</bean>
+						<bean class="com.kona.kms.code.CodePair" scope="prototype">
+							<constructor-arg index="0" value="EC"/>
+							<constructor-arg index="1" value="EC"/>
+						</bean>
+					</list>
+				</entry>
+			</map>
+		</property>
+		
+		<!-- Key Length Code by Key Sub Type -->
+		<property name="keyLength">
+			<map>
+				<entry key="DES">
+					<list>
+						<value>64</value>
+						<value>128</value>
+					</list>
+				</entry>
+				<entry key="SEED">
+					<list>
+						<value>64</value>
+					</list>
+				</entry>
+				<entry key="AES">
+					<list>
+						<value>128</value>
+						<value>192</value>
+						<value>256</value>
+					</list>
+				</entry>
+				<entry key="RSA">
+					<list>
+						<value>768</value>
+						<value>1024</value>
+						<value>1152</value>
+						<value>1408</value>
+						<value>2048</value>
+					</list>
+				</entry>
+				<entry key="RSACRT">
+					<list>
+						<value>768</value>
+						<value>1024</value>
+						<value>1152</value>
+						<value>1408</value>
+						<value>2048</value>
+					</list>
+				</entry>
+				<entry key="EC">
+					<list>
+						<value>768</value>
+						<value>1024</value>
+						<value>1152</value>
+						<value>1408</value>
+						<value>2048</value>
+					</list>
+				</entry>
+			</map>
+		</property>
+		
+		<!-- Key Role Code -->
+		<property name="keyRoles">
+			<list>
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="SD"/>
+					<constructor-arg index="1" value="SD Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="TK"/>
+					<constructor-arg index="1" value="Transport Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="AK"/>
+					<constructor-arg index="1" value="Application Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="RK"/>
+					<constructor-arg index="1" value="Issuer RSA Key"/>
+				</bean>
+			</list>
+		</property>
+		
+		<!-- SD Key Role Key Definition -->
+		<property name="keyDefinitions">
+			<list>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="20-47"/>
+					<constructor-arg index="1" value="01"/>
+					<constructor-arg index="2" value="SCP02 ENC Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="20-47"/>
+					<constructor-arg index="0" value="02"/>
+					<constructor-arg index="3" value="SCP02 MAC Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="20-47"/>
+					<constructor-arg index="0" value="03"/>
+					<constructor-arg index="3" value="SCP02 DEK Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="01-15"/>
+					<constructor-arg index="0" value="01"/>
+					<constructor-arg index="3" value="SCP80 ENC Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="01-15"/>
+					<constructor-arg index="0" value="02"/>
+					<constructor-arg index="3" value="SCP80 MAC Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="01-15"/>
+					<constructor-arg index="3" value="SCP80 DEK Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="70"/>
+					<constructor-arg index="0" value="01"/>
+					<constructor-arg index="3" value="Token Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="71"/>
+					<constructor-arg index="0" value="01"/>
+					<constructor-arg index="3" value="Receipt Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="11"/>
+					<constructor-arg index="1" value="01"/>
+					<constructor-arg index="2" value="DAP Key"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="73"/>
+					<constructor-arg index="1" value="01"/>
+					<constructor-arg index="2" value="DAP Verification Key"/>
+				</bean>
+				
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="74"/>
+					<constructor-arg index="1" value="01"/>
+					<constructor-arg index="2" value="CASD Key - PK.CA.AU"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="74"/>
+					<constructor-arg index="1" value="02"/>
+					<constructor-arg index="2" value="SK.CASD.AUT (PK) and KS.CASD.AUT (Non-PK)"/>
+				</bean>
+				<bean class="com.kona.kms.code.KeyDefinition" scope="prototype">
+					<constructor-arg index="0" value="74"/>
+					<constructor-arg index="1" value="03"/>
+					<constructor-arg index="2" value="SK.CASD.CT (PK) and KS.CASD.CT (Non-PK)"/>
+				</bean>				
+				<bean class="com.kona.kms.code.CodePair" scope="prototype">
+					<constructor-arg index="0" value="75"/>
+					<constructor-arg index="1" value="01"/>
+					<constructor-arg index="2" value="Decipher Key"/>
+				</bean>
+			</list>
+		</property>
+	</bean>
+</beans>

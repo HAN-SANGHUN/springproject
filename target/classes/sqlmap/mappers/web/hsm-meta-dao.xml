@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="hsm">
+	
+	<sql id="hsmList_find">
+		WHERE 1 = 1
+        <if test="hsmLabel !='' and hsmLabel != null">
+          AND hsm_label LIKE '%${hsmLabel}%'
+        </if>
+        <if test="statusCode !='' and statusCode != null">
+          AND hsm_stats_cd LIKE '%${statusCode}%'
+        </if>
+        <if test="ipAddress !='' and ipAddress != null">
+          AND hsm_ipadd LIKE '%${ipAddress}%'
+        </if>
+	</sql>
+	
+	<sql id="lhsm_find">
+		WHERE 1 = 1
+        <if test="hsmLabel !='' and hsmLabel != null">
+          AND lhsm_label LIKE '%${hsmLabel}%'
+        </if>
+        <if test="statusCode !='' and statusCode != null">
+          AND lhsm_stats_cd LIKE '%${statusCode}%'
+        </if>
+	</sql>
+	
+	<select id="getPhysicalHsmList" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel" resultType="com.kona.kms.web.ss.hsm.model.HsmMetaModel">
+		SELECT *
+		FROM (	SELECT 	ROWNUM AS RNUM,
+			         	b.*
+				FROM (	SELECT	hsm_no 					as hsmNo,
+								hsm_label 				as hsmLabel,
+								lhsm_no                 as lhsmNo,
+								slot_cnt 				as slotCount,
+								slot_start_no 			as slotStartNum,
+								slot_end_no 			as slotEndNum,
+								(select count(*) from khm_ptoken s where s.hsm_no = a.hsm_no and s.slot_stats_cd='Active') as tokenAllocationNum,
+								hsm_ipadd 				as ipAddress,
+								hsm_port				as port,
+								hsm_stats_cd 			as statusCode,
+								hsm_stats_descr			as description,
+								hsm_primary_cd          as primaryCode,
+								reg_user_id				as registrationUserId,
+								reg_tmpst				as registrationDate,
+								upd_user_id				as updateUserId,
+								upd_tmpst				as updateDate				
+						FROM	khm_phsm a
+						<include refid="hsmList_find" />
+						ORDER BY ${sortname} ${sortorder}
+						) b) c
+		WHERE c.RNUM BETWEEN #{startRowNum} AND #{endRowNum}
+	</select>
+	
+	<select id="getTotalRecord" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM khm_phsm
+        <include refid="hsmList_find"/>
+	</select>
+	
+	
+	<select id="getPhysicalHsm" parameterType="int" resultType="com.kona.kms.web.ss.hsm.model.HsmMetaModel"> 
+		SELECT 	hsm_no 					as hsmNo,
+				hsm_label 				as hsmLabel,
+				lhsm_no                 as lhsmNo,
+				slot_cnt 				as slotCount,
+				slot_start_no 			as slotStartNum,
+				slot_end_no 			as slotEndNum,
+				(select count(*) from khm_ptoken s where s.hsm_no = a.hsm_no and s.slot_stats_cd='Active') as tokenAllocationNum,
+				hsm_ipadd 				as ipAddress,
+				hsm_port				as port,
+				hsm_stats_cd 			as statusCode,
+				hsm_stats_descr			as description,
+				hsm_primary_cd          as primaryCode,
+				reg_user_id				as registrationUserId,
+				reg_tmpst				as registrationDate,
+				upd_user_id				as updateUserId,
+				upd_tmpst				as updateDate
+		FROM	khm_phsm a
+		WHERE hsm_no = #{hsmNo}
+	</select>
+	
+	<select id="getPhysicalHsmPrimary" resultType="com.kona.kms.web.ss.hsm.model.HsmMetaModel"> 
+		SELECT 	hsm_no 					as hsmNo,
+				hsm_label 				as hsmLabel,
+				lhsm_no                 as lhsmNo,
+				slot_cnt 				as slotCount,
+				slot_start_no 			as slotStartNum,
+				slot_end_no 			as slotEndNum,
+				(select count(*) from khm_ptoken s where s.hsm_no = a.hsm_no and s.slot_stats_cd='Active') as tokenAllocationNum,
+				hsm_ipadd 				as ipAddress,
+				hsm_port				as port,
+				hsm_stats_cd 			as statusCode,
+				hsm_stats_descr			as description,
+				hsm_primary_cd          as primaryCode,
+				reg_user_id				as registrationUserId,
+				reg_tmpst				as registrationDate,
+				upd_user_id				as updateUserId,
+				upd_tmpst				as updateDate
+		FROM	khm_phsm a
+		WHERE hsm_primary_cd = 'Primary'
+	</select>
+	
+	<select id="getPhysicalHsmListAll" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel" resultType="com.kona.kms.web.ss.hsm.model.HsmMetaModel">
+		SELECT	hsm_no 					as hsmNo,
+				hsm_label 				as hsmLabel,
+				lhsm_no                 as lhsmNo,
+				slot_cnt 				as slotCount,
+				slot_start_no 			as slotStartNum,
+				slot_end_no 			as slotEndNum,
+				(select count(*) from khm_ptoken s where s.hsm_no = a.hsm_no and s.slot_stats_cd='Active') as tokenAllocationNum,
+				hsm_ipadd 				as ipAddress,
+				hsm_port				as port,
+				hsm_stats_cd 			as statusCode,
+				hsm_stats_descr			as description,
+				hsm_primary_cd          as primaryCode,
+				reg_user_id				as registrationUserId,
+				reg_tmpst				as registrationDate,
+				upd_user_id				as updateUserId,
+				upd_tmpst				as updateDate				
+				FROM	khm_phsm a
+		<include refid="hsmList_find" />
+		ORDER BY ${sortname} ${sortorder}
+	</select>
+		
+	<insert id="insertPhysicalHsm" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel"> 
+		<selectKey resultType="int" keyProperty="hsmNo" order="BEFORE">
+			select phsm_no_seq.nextval from dual
+		</selectKey>
+		INSERT INTO khm_phsm (
+			hsm_no,
+			hsm_label,
+			lhsm_no,
+			slot_cnt,
+			slot_start_no,
+			slot_end_no,
+			hsm_ipadd,
+			hsm_port,
+			hsm_stats_cd,
+			hsm_stats_descr,
+			hsm_primary_cd,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst)
+        VALUES (
+        	#{hsmNo},
+			#{hsmLabel},
+			#{lhsmNo},
+			#{slotCount},
+			#{slotStartNum},
+			#{slotEndNum},
+			#{ipAddress},
+			#{port},
+			#{statusCode},
+			#{description},
+			#{primaryCode},
+			#{registrationUserId},
+			#{registrationDate},
+			#{updateUserId},
+			#{updateDate}) 
+	</insert>
+	
+	<update id="updatePhysicalHsm" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel">
+		UPDATE 	khm_phsm
+		SET 	hsm_label       = #{hsmLabel},
+				lhsm_no			= #{lhsmNo},
+				slot_start_no   = #{slotStartNum},
+				slot_end_no     = #{slotEndNum},
+				hsm_ipadd       = #{ipAddress},
+				hsm_port        = #{port},
+				hsm_stats_cd    = #{statusCode},
+				hsm_stats_descr	= #{description},
+				upd_user_id	    = #{updateUserId},
+				upd_tmpst       = #{updateDate}
+		WHERE 	hsm_no = #{hsmNo}		
+	</update>
+
+	
+	<update id="deletePhysicalHsm" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel">
+		update  khm_phsm
+		SET		hsm_stats_cd = #{statusCode},
+				upd_user_id	= #{updateUserId},
+				upd_tmpst = #{updateDate}
+		WHERE 	hsm_no = #{hsmNo}
+	</update>
+	
+	<delete id="deletePhysicalHsmPermanantly" parameterType="int">
+		delete from khm_phsm
+		where hsm_no = #{value}
+	</delete>
+	
+ 	
+	<update id="setHsmMetaStatus" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel">
+		UPDATE	khm_phsm
+		SET		hsm_stats_cd = #{statusCode},
+				upd_user_id = #{updateUserId},
+				upd_tmpst = #{updateDate}
+		WHERE 	hsm_no = #{hsmNo}
+	</update>
+	
+	<!-- NEW LHSM -->
+	<select id="getLHSMRecord" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel" resultType="Integer">
+		SELECT 	COUNT(*)
+        FROM 	khm_phsm
+	</select>
+	
+	<select id="getLTokenCount" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel" resultType="Integer">
+		SELECT 	ltoken_cnt 
+		FROM 	khm_lhsm
+		<include refid="lhsm_find"/>
+	</select>
+	
+	<insert id="insertLogicalHsm" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel"> 
+		<selectKey resultType="int" keyProperty="lhsmNo" order="BEFORE">
+			select lhsm_no_seq.nextval from dual
+		</selectKey>
+		INSERT INTO khm_lhsm (
+			lhsm_no,
+			lhsm_label,
+			phsm_cnt,
+			ltoken_cnt,
+			ltoken_start_no,
+			ltoken_end_no,
+			lhsm_stats_cd,
+			lhsm_stats_descr,
+			descr,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst) 
+        VALUES (
+        	#{lhsmNo},
+			#{hsmLabel},
+			#{phsmCount},
+			#{slotCount},
+			#{slotStartNum},
+			#{slotEndNum},
+			#{statusCode},
+			#{StatusDescription},
+			#{description},
+			#{registrationUserId},
+			#{registrationDate},
+			#{updateUserId},
+			#{updateDate}) 
+	</insert>
+
+	<update id="updateLogicalHsm" parameterType="com.kona.kms.web.ss.hsm.model.HsmMetaModel">
+		UPDATE 	khm_lhsm
+		SET 	phsm_cnt = phsm_cnt + 1,
+				ltoken_cnt = ltoken_cnt + #{slotCount},
+				ltoken_end_no = ltoken_end_no + 1,
+				upd_user_id	= #{updateUserId},
+				upd_tmpst = #{updateDate}
+		WHERE 	lhsm_no = #{lhsmNo}		
+	</update>
+</mapper>

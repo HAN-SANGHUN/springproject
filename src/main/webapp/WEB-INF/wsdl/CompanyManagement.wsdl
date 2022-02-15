@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" 
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:konakms="http://www.konai.com/KmsExchangeMessage" 
+	xmlns:tns="http://www.konai.com/CompanyManagement" 
+	targetNamespace="http://www.konai.com/CompanyManagement">
+
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import namespace="http://www.konai.com/KmsExchangeMessage" schemaLocation="../xsd/KmsExchangeMessage.xsd"/>
+ 		</xsd:schema>
+    </wsdl:types>
+
+	<wsdl:message name="CompanyInfoRequest">
+		<wsdl:part name="CompanyInfoRequest" element="konakms:CompanyInfoRequest"/>
+	</wsdl:message>
+
+	<wsdl:message name="CompanyInfoResponse">
+		<wsdl:part name="CompanyInfoResponse" element="konakms:CompanyInfoResponse"/>
+	</wsdl:message>
+
+	<wsdl:portType name="CompanyManagementPort">
+		<wsdl:operation name="SendCompanyInfo">
+			<wsdl:input message="tns:CompanyInfoRequest" wsaw:Action="http://www.konai.com/CompanyManagement/SendCompanyInfoRequest"/>
+			<wsdl:output message="tns:CompanyInfoResponse" wsaw:Action="http://www.konai.com/CompanyManagement/SendCompanyInfoResponse"/>
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="CompanyManagementBinding" type="tns:CompanyManagementPort">
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/wsdl/soap12/"/>		
+		<wsaw:UsingAddressing wsdl:required="true"/>
+		<wsdl:operation name="SendCompanyInfo">
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>			
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="CompanyManagementService">
+		<wsdl:port name="CompanyManagementEndPoint" binding="tns:CompanyManagementBinding">
+			<soap12:address location="http://10.10.20.117/KMS/Companyinfo"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

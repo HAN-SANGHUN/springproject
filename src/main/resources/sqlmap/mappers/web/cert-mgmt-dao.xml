@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="certMgmt">
+
+	<sql id="certReqList_find">
+		WHERE 1 = 1
+		AND bin_stats_cd != 'DELETE'
+		<if test="companyID !='' and companyID != null">
+			AND com_id = '${companyID}'
+		</if>
+        <if test="companyName !='' and companyName != null">
+          AND com_id IN (select com_id from kms.khm_com where com_name LIKE '%${companyName}%')
+        </if>       
+         <if test="certiResFileName !='' and certiResFileName != null">
+           AND certn_req_file_name = '${certiResFileName}'
+        </if>
+         <if test="certificateName !='' and certificateName != null">
+           AND certn_name = '${certificateName}'
+        </if>
+        <if test="brandTypeCode !='' and brandTypeCode != null">
+           AND brand_type_cd = '${brandTypeCode}'
+        </if>  
+        <if test="binNumber != '' and binNumber != null">
+        	AND bin_no like '%${binNumber}%'
+        </if> 
+        <if test="binStatusCode != '' and binStatusCode != null">
+        	AND bin_stats_cd = '${binStatusCode}'
+        </if> 
+        <if test="trackingNumber != '' and trackingNumber != null">
+        	AND trk_no like '%${trackingNumber}%'
+        </if> 
+        <if test="ipkIndex != '' and ipkIndex != null and ipkIndex != '0'">
+        	AND isuer_pk_index like '%${ipkIndex}%'
+        </if>          
+        <if test="ipkSize != '' and ipkSize != null">
+        	AND isuer_pk_size = '${ipkSize}'
+        </if>
+        <if test="periodType =='01'">
+           AND SUBSTR(TO_CHAR(certn_req_dt),1,8) BETWEEN REPLACE(NVL('${startDate}','19000101'),'-','') AND REPLACE(NVL('${endDate}','29991231'),'-','')
+        </if>
+        <if test="periodType =='02'">
+           AND SUBSTR(TO_CHAR(expie_dt),1,8) BETWEEN REPLACE(NVL('${startDate}','19000101'),'-','') AND REPLACE(NVL('${endDate}','29991231'),'-','')
+        </if>
+        <if test="periodType =='03'">
+           AND SUBSTR(TO_CHAR(reg_tmp_st),1,8) BETWEEN REPLACE(NVL('${startDate}','19000101'),'-','') AND REPLACE(NVL('${endDate}','29991231'),'-','')
+        </if>  
+        <if test="hashValue != '' and hashValue != null">
+           AND CERTN_HASH_VAL  = '${hashValue}'
+        </if>                 
+	</sql>
+	
+	<select id="getCertificateList" parameterType="com.kona.kms.web.cert.model.CertificateModel" resultType="com.kona.kms.web.cert.model.CertificateModel">
+		SELECT *
+		FROM (SELECT ROWNUM AS RNUM,
+			         c.*
+		      FROM (SELECT a.certn_uid           as certificateUID,
+		      			   a.com_id              as companyID,		      			   
+		      			   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,		
+		      			   a.certn_name          as certificateName,
+		      			   a.brand_type_cd       as brandTypeCode,
+		      			   a.bin_no              as binNumber,
+		      			   a.trk_no              as trackingNumber,
+		      			   a.isuer_pk_index      as ipkIndex,
+		      			   a.isuer_pk_size       as ipkSize,
+		      			   a.expie_dt            as expireDate,
+		      			   a.certn_req_dt        as requestDate,  		
+		      			   a.key_subject         as keySubject,			        			   
+		      			   a.key_prof_id         as keyProfileID,
+		      			   a.key_prof_ver        as keyProfileVersion,		
+		      			   a.key_prof_name       as keyProfileName,      			   
+		      			   a.certn_req_file_name as certiReqFileName,	
+		      			   <!--       	
+		      			   a.certn_req_biny_file as certiReqBinaryFile,	 
+		      			   -->
+		      			   a.certn_res_file_name as certiResFileName,
+		      			   <!-- 
+		      			   a.certn_res_biny_file as certiResBinaryFile,
+		      			   -->
+		      			   a.isuer_pk_exp_val    as exponentValue,
+		      			   a.certn_hash_val      as hashValue,
+		      			   a.ca_serial_no        as caSerialNumber,
+   			   			   a.ca_pk_index         as caPublicKeyIndex,
+   			   			   a.ca_pk_len           as caPublicKeyLength,
+		      			   a.bin_stats_cd        as binStatusCode,
+		      			   a.req_send_stats_cd   as reqSendStatusCode,
+		      			   a.res_send_stats_cd   as resSendStatusCode,	      			   	      			   
+		      			   a.reg_user_id         as registrationUserID,
+		      			   a.reg_tmpst           as registrationDate,
+		      			   a.upd_user_id         as updateUserID,
+		      			   a.upd_tmpst           as updateDate
+		           FROM kky_certn a
+		           <include refid="certReqList_find" />
+		           ORDER BY ${sortname} ${sortorder}) c) d
+		WHERE d.RNUM BETWEEN #{startRowNum} AND #{endRowNum} 
+	</select>
+		
+	<select id="getTotalRecord" parameterType="com.kona.kms.web.cert.model.CertificateModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM kky_certn
+        <include refid="certReqList_find"/>
+	</select>
+	
+    <select id="getCertificateListAll" parameterType="com.kona.kms.web.cert.model.CertificateModel" resultType="com.kona.kms.web.cert.model.CertificateModel">
+		SELECT a.certn_uid           as certificateUID,
+    		   a.com_id              as companyID,		      			   
+    		   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,		
+    		   a.certn_name          as certificateName,
+   			   a.brand_type_cd       as brandTypeCode,
+   			   a.bin_no              as binNumber,
+   			   a.trk_no              as trackingNumber,
+   			   a.isuer_pk_index      as ipkIndex,
+   			   a.isuer_pk_size       as ipkSize,
+   			   a.expie_dt            as expireDate,
+   			   a.certn_req_dt        as requestDate,  		
+   			   a.key_subject         as keySubject,			        			   
+   			   a.key_prof_id         as keyProfileID,
+   			   a.key_prof_ver        as keyProfileVersion,		
+   			   a.key_prof_name       as keyProfileName,      			   
+   			   a.certn_req_file_name as certiReqFileName,
+   			   a.certn_res_file_name as certiResFileName,
+   			   a.isuer_pk_exp_val    as exponentValue,
+   			   a.certn_hash_val      as hashValue,
+   			   a.ca_serial_no        as caSerialNumber,
+   			   a.ca_pk_index         as caPublicKeyIndex,
+   			   a.ca_pk_len           as caPublicKeyLength,
+   			   a.bin_stats_cd        as binStatusCode,
+   			   a.req_send_stats_cd   as reqSendStatusCode,
+   			   a.res_send_stats_cd   as resSendStatusCode,	      			   	      			   
+   			   a.reg_user_id         as registrationUserID,
+   			   a.reg_tmpst           as registrationDate,
+   			   a.upd_user_id         as updateUserID,
+   			   a.upd_tmpst           as updateDate
+        FROM kky_certn a
+        <include refid="certReqList_find" />
+        ORDER BY ${sortname} ${sortorder}
+	</select>
+	
+	<select id="getCertificate" parameterType="string" resultType="com.kona.kms.web.cert.model.CertificateModel">
+		SELECT a.certn_uid           as certificateUID,
+    		   a.com_id              as companyID,		      			   
+    		   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,		
+    		   a.certn_name          as certificateName,
+   			   a.brand_type_cd       as brandTypeCode,
+   			   a.bin_no              as binNumber,
+   			   a.trk_no              as trackingNumber,
+   			   a.isuer_pk_index      as ipkIndex,
+   			   a.isuer_pk_size       as ipkSize,
+   			   a.expie_dt            as expireDate,
+   			   a.certn_req_dt        as requestDate,  		
+   			   a.key_subject         as keySubject,			        			   
+   			   a.key_prof_id         as keyProfileID,
+   			   a.key_prof_ver        as keyProfileVersion,		
+   			   a.key_prof_name       as keyProfileName,      			   
+   			   a.certn_req_file_name as certiReqFileName,
+   			   a.certn_req_biny_file as certiReqBinaryFile,
+   			   a.certn_res_file_name as certiResFileName,
+   			   a.certn_res_biny_file as certiResBinaryFile,
+   			   a.isuer_pk_exp_val    as exponentValue,
+   			   a.certn_hash_val      as hashValue,
+   			   a.ca_serial_no        as caSerialNumber,
+   			   a.ca_pk_index         as caPublicKeyIndex,
+   			   a.ca_pk_len           as caPublicKeyLength,
+   			   a.bin_stats_cd        as binStatusCode,
+   			   a.req_send_stats_cd   as reqSendStatusCode,
+   			   a.res_send_stats_cd   as resSendStatusCode,	      			   	      			   
+   			   a.reg_user_id         as registrationUserID,
+   			   a.reg_tmpst           as registrationDate,
+   			   a.upd_user_id         as updateUserID,
+   			   a.upd_tmpst           as updateDate
+        FROM kky_certn a
+        WHERE certn_uid=#{value}
+	</select>
+	
+	<select id="getOldVersionCertificate" parameterType="java.util.Map" resultType="com.kona.kms.web.cert.model.CertificateModel">
+		SELECT a.certn_uid           as certificateUID,
+    		   a.com_id              as companyID,		      			   
+    		   (select com_name from khm_com b where b.com_id=a.com_id) as companyName,		
+    		   a.certn_name          as certificateName,
+   			   a.brand_type_cd       as brandTypeCode,
+   			   a.bin_no              as binNumber,
+   			   a.trk_no              as trackingNumber,
+   			   a.isuer_pk_index      as ipkIndex,
+   			   a.isuer_pk_size       as ipkSize,
+   			   a.expie_dt            as expireDate,
+   			   a.certn_req_dt        as requestDate,  		
+   			   a.key_subject         as keySubject,			        			   
+   			   a.key_prof_id         as keyProfileID,
+   			   a.key_prof_ver        as keyProfileVersion,		
+   			   a.key_prof_name       as keyProfileName,      			   
+   			   a.certn_req_file_name as certiReqFileName,
+   			   a.certn_req_biny_file as certiReqBinaryFile,
+   			   a.certn_res_file_name as certiResFileName,
+   			   a.certn_res_biny_file as certiResBinaryFile,
+   			   a.isuer_pk_exp_val    as exponentValue,
+   			   a.certn_hash_val      as hashValue,
+   			   a.ca_serial_no        as caSerialNumber,
+   			   a.ca_pk_index         as caPublicKeyIndex,
+   			   a.ca_pk_len           as caPublicKeyLength,
+   			   a.bin_stats_cd        as binStatusCode,
+   			   a.req_send_stats_cd   as reqSendStatusCode,
+   			   a.res_send_stats_cd   as resSendStatusCode,	      			   	      			   
+   			   a.reg_user_id         as registrationUserID,
+   			   a.reg_tmpst           as registrationDate,
+   			   a.upd_user_id         as updateUserID,
+   			   a.upd_tmpst           as updateDate
+        FROM kky_certn a
+        WHERE bin_no = #{bin}
+              and isuer_pk_index = #{ipkIndex}
+              and bin_stats_cd = 'USE'
+	</select>
+	
+	<update id="updateCertificateAsDisposal" parameterType="com.kona.kms.web.cert.model.CertificateModel">
+		update kky_certn
+		set bin_stats_cd        = #{binStatusCode},
+ 			upd_user_id         = #{updateUserID},
+ 			upd_tmpst           = #{updateDate}
+		where certn_uid=#{certificateUID}
+	</update>
+	
+	<update id="registerCertificate" parameterType="com.kona.kms.web.cert.model.CertificateModel">
+		update kky_certn
+		set certn_res_file_name = #{certiResFileName},	      	
+ 			certn_res_biny_file = #{certiResBinaryFile},
+ 			ca_serial_no        = #{caSerialNumber},
+ 			ca_pk_index         = #{caPublicKeyIndex},
+ 			ca_pk_len           = #{caPublicKeyLength},
+ 			bin_stats_cd        = #{binStatusCode},
+ 			upd_user_id         = #{updateUserID},
+ 			upd_tmpst           = #{updateDate}
+   		where certn_uid=#{certificateUID}
+	</update>
+	
+	<update id="updateReqTransferFlag" parameterType="string">
+		update kky_certn set
+			   req_send_stats_cd = 'Y'
+		where certn_uid=#{value}
+	</update>
+	
+	<update id="updateResTransferFlag" parameterType="string">
+		update kky_certn set
+			   res_send_stats_cd = 'Y'
+		where certn_uid=#{value}
+	</update>
+	
+	<update id="logTransferException" parameterType="com.kona.kms.web.cert.model.CertJobModel">
+		update kky_certn_send set
+		       try_cnt     = #{tryCount},
+			   description = #{description},
+			   upd_user_id = #{updateUserID},
+			   upd_tmpst =   #{updateDate}
+		where certn_uid=#{certificateUID}
+	</update>
+	
+	<delete id="deleteCertJob" parameterType="string">
+		delete from kky_certn_send
+		where certn_uid=#{value}
+	</delete>
+	
+	<select id="getCertificatesToTransfer" resultType="com.kona.kms.web.cert.model.CertJobModel">
+		<![CDATA[
+		select certn_uid    as certificateUID,
+			   certn_name   as certificateName,
+			   work_code    as workcode,
+			   try_cnt      as tryCount,
+			   description  as description
+		from kky_certn_send
+		where try_cnt < 3
+		]]>
+	</select>
+	
+	<select id="getCertificateToTransfer" parameterType="string" resultType="com.kona.kms.web.cert.model.CertJobModel">
+		<![CDATA[
+		select certn_uid    as certificateUID,
+			   certn_name   as certificateName,
+			   work_code    as workcode,
+			   try_cnt      as tryCount,
+			   description  as description
+		from kky_certn_send
+		where certn_uid=#{value}
+		]]>
+	</select>
+	
+	<insert id="insertCertJob" parameterType="com.kona.kms.web.cert.model.CertJobModel">
+		insert into kky_certn_send(
+			certn_uid,
+			certn_name,
+			work_code,
+			try_cnt,
+			description,
+			reg_user_id,
+			reg_tmpst,
+			upd_user_id,
+			upd_tmpst
+		)values(
+			#{certificateUID},
+			#{certificateName},
+			#{workcode},
+			#{tryCount},
+			#{description},
+			#{registrationUserID},
+			#{registrationDate},
+			#{updateUserID},
+			#{updateDate}
+		)
+	</insert>
+
+</mapper>

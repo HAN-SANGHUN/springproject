@@ -1,0 +1,114 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jaxws="http://cxf.apache.org/jaxws"
+	xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:cxf="http://cxf.apache.org/core"
+	xmlns:soap="http://cxf.apache.org/bindings/soap"
+	xsi:schemaLocation="
+http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
+
+	<import resource="classpath:META-INF/cxf/cxf.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-extension-soap.xml" />
+	<import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
+
+	<!-- kms crypto service -->
+	<jaxws:endpoint id="cryptoService" implementor="com.kona.kms.crypto.ws.KmsCryptoServiceImpl" address="/KmsCryptoService">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:endpoint>
+	<jaxws:client id="cryptoClient" serviceClass="com.kona.kms.crypto.ws.KmsCryptoService" address="http://localhost:8080/services/KmsCryptoService">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:client>
+	
+	<!-- CompanyInfo service -->
+	<jaxws:client id="comClient" serviceClass="com.konai.companymanagement.CompanyManagementPort" address="http://localhost:8080/services/CompanyManagementService">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:client> 
+	<!-- add by shifei 2014-04-16 -->
+	 <!-- <jaxws:endpoint id="companyMgmtService" implementor="com.konai.companymanagement.CompanyManagementPortImpl" address="/CompanyManagementService">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:endpoint>	  -->
+	
+	
+	
+ 	<jaxws:endpoint 
+		id="companyMgmtService" 
+		implementor="com.konai.companymanagement.CompanyManagementPortImpl" 
+		address="CompanyManagementService"
+		wsdlLocation="/WEB-INF/wsdl/CompanyManagement.wsdl"
+		>
+		<jaxws:binding>
+	      <soap:soapBinding mtomEnabled="true" version="1.2"/>
+	    </jaxws:binding>
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:endpoint> 
+	
+	
+	
+	
+	<!-- Key Management service -->
+	<!-- add by shifei 2014-04-16 -->
+	<!--  <jaxws:client id="kiClient" serviceClass="com.konai.keymanagement.KeyManagementPort" address="http://localhost:8080/services/KeyManagementService">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+    </jaxws:client>	
+	<jaxws:endpoint id="keyMgmtService" implementor="com.konai.keymanagement.KeyManagementPortImpl" address="/KeyManagementService">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:endpoint>  -->
+	
+	
+	<!-- <jaxws:client id="kiClient" serviceClass="com.konai.keymanagement.KeyManagementPort" address="http://localhost:8080/services/KeyManagementService"> -->
+	<jaxws:client id="kiClient" serviceClass="com.konai.keymanagement.KeyManagementPort" address="${default_key_Management_Port}">
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+        <jaxws:binding>
+        	<soap:soapBinding version="1.2" />
+        </jaxws:binding>
+    </jaxws:client>	
+    
+    
+	<jaxws:endpoint 
+		id="keyMgmtService" 
+		implementor="com.konai.keymanagement.KeyManagementPortImpl" 
+		address="KeyManagementService"
+		wsdlLocation="/WEB-INF/wsdl/KeyManagement.wsdl"
+		>
+		<jaxws:features>
+            <wsa:addressing xmlns:wsa="http://cxf.apache.org/ws/addressing"/>
+        </jaxws:features>
+	</jaxws:endpoint> 
+	
+	
+	<bean id="logInbound" class="org.apache.cxf.interceptor.LoggingInInterceptor" />
+	<bean id="logOutbound" class="org.apache.cxf.interceptor.LoggingOutInterceptor" />
+
+	<cxf:bus>
+		<cxf:inInterceptors>
+			<ref bean="logInbound" />
+		</cxf:inInterceptors>
+		<cxf:outInterceptors>
+			<ref bean="logOutbound" />
+		</cxf:outInterceptors>
+		<cxf:inFaultInterceptors>
+			<ref bean="logInbound" />
+		</cxf:inFaultInterceptors>
+		<cxf:outFaultInterceptors>
+			<ref bean="logOutbound" />
+		</cxf:outFaultInterceptors>
+	</cxf:bus>
+
+</beans>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="company">
+	
+	<sql id="companyList_find">
+		WHERE 1 = 1
+        <if test="companyId !='' and companyId != null">
+          AND com_id = '${companyId}'
+        </if>
+        <if test="companyName !='' and companyName != null">
+          AND com_name LIKE '%${companyName}%'
+        </if>
+        <if test="companyStatusCode !='' and companyStatusCode != null">
+          AND com_stats_cd = '${companyStatusCode}'
+        </if>
+        <if test="tokenLabel !='' and tokenLabel != null">
+          AND com_id IN (select com_id from khm_ltoken where token_label LIKE '%${tokenLabel}%')
+        </if>
+	</sql>
+	
+	<select id="getCompanyList" parameterType="com.kona.kms.web.ss.company.model.CompanyModel" resultType="com.kona.kms.web.ss.company.model.CompanyModel">
+		SELECT *
+		FROM (	SELECT 	ROWNUM AS RNUM,
+			         	b.*
+				FROM (	SELECT	com_id 				as companyId,
+								com_name 			as companyName,
+								com_type_cd 		as companyTypeCode,
+								(select token_label from khm_ltoken n where n.com_id=a.com_id) as tokenLabel,
+								cntry_cd 			as countryCode,
+								fax,
+								email,
+								hp_url 				as homepageUrl,
+								addr 				as address,
+								biz_lic_no 			as bizLicenseNo,
+								ofc_tel_no 			as officeTelNum,
+								com_descr 			as companyDescription,
+								com_stats_cd 		as companyStatusCode,
+								com_stats_descr 	as companyStatusDescription,
+								reg_user_id			as registrationUserId,
+								reg_tmpst			as registrationDate,
+								upd_user_id			as updateUserId,
+								upd_tmpst			as updateDate				
+						FROM	khm_com a
+						<include refid="companyList_find" />
+						ORDER BY ${sortname} ${sortorder}
+						) b) c
+		WHERE c.RNUM BETWEEN #{startRowNum} AND #{endRowNum} 		
+	</select>	
+	
+	<select id="getTotalRecord" parameterType="com.kona.kms.web.ss.company.model.CompanyModel" resultType="Integer">
+		SELECT COUNT(*) AS RECORD_COUNT
+        FROM khm_com
+        <include refid="companyList_find"/>
+	</select>	
+
+	<select id="getCompanyListAll" parameterType="com.kona.kms.web.ss.company.model.CompanyModel" resultType="com.kona.kms.web.ss.company.model.CompanyModel">
+		SELECT	com_id 				as companyId,
+				com_name 			as companyName,
+				com_type_cd 		as companyTypeCode,
+				(select token_label from khm_ltoken n where n.com_id=a.com_id) as tokenLabel,
+				cntry_cd 			as countryCode,
+				fax,
+				email,
+				hp_url 				as homepageUrl,
+				addr 				as address,
+				biz_lic_no 			as bizLicenseNo,
+				ofc_tel_no 			as officeTelNum,
+				com_descr 			as companyDescription,
+				com_stats_cd 		as companyStatusCode,
+				com_stats_descr 	as companyStatusDescription,
+				reg_user_id			as registrationUserId,
+				reg_tmpst			as registrationDate,
+				upd_user_id			as updateUserId,
+				upd_tmpst			as updateDate				
+		FROM	khm_com a
+		<include refid="companyList_find" />
+		ORDER BY ${sortname} ${sortorder}
+	</select>
+
+
+    <update id="deleteCompany" parameterType="String"> 
+		UPDATE khm_com
+		   SET com_stats_cd = #{companyStatusCode},
+			   upd_user_id  = #{updateUserId}, 
+			   upd_tmpst    = #{updateDate}
+		 WHERE com_id       = #{companyId}
+	</update>
+	
+	<update id="setCompanyStatus" parameterType="com.kona.kms.web.ss.company.model.CompanyModel">
+		UPDATE khm_com
+		   SET com_stats_cd = #{companyStatusCode},
+			   upd_user_id  = #{updateUserId}, 
+			   upd_tmpst    = #{updateDate}
+		 WHERE com_id       = #{companyId}
+	</update>
+
+	<update id="updateCompany" parameterType="com.kona.kms.web.ss.company.model.CompanyModel">
+		UPDATE khm_com
+		SET com_name = #{companyName},
+			com_type_cd = #{companyTypeCode},
+			cntry_cd = #{countryCode},
+			fax = #{fax},
+			email = #{email},
+			hp_url = #{homepageUrl},
+			addr = #{address},
+			biz_lic_no = #{bizLicenseNo},
+			ofc_tel_no = #{officeTelNum},
+			com_descr = #{companyDescription},
+			com_stats_cd = #{companyStatusCode},
+			com_stats_descr = #{companyStatusName},
+			upd_user_id = #{updateUserId}, 
+			upd_tmpst = #{updateDate}
+		WHERE com_id = #{companyId}
+	</update>
+	
+	<select id="selectCompany" parameterType="String" resultType="com.kona.kms.web.ss.company.model.CompanyModel"> 
+		SELECT 	com_id 				as companyId,
+				com_name 			as companyName,
+				com_type_cd 		as companyTypeCode,
+				cntry_cd 			as countryCode,
+				(select token_label from khm_ltoken n where n.com_id=a.com_id) as tokenLabel,
+				fax,
+				email,
+				hp_url 				as homepageUrl,
+				addr 				as address,
+				biz_lic_no 			as bizLicenseNo,
+				ofc_tel_no 			as officeTelNum,
+				com_descr 			as companyDescription,
+				com_stats_cd 		as companyStatusCode,
+				com_stats_descr		as companyStatusDescription,
+				reg_user_id			as registrationUserId,
+				reg_tmpst			as registrationDate,
+				upd_user_id			as updateUserId,
+				upd_tmpst			as updateDate							
+		FROM khm_com a  
+		<!-- modify by shifei 20140513 -->
+		<!-- WHERE com_id = #{compId} -->
+		WHERE com_id = #{companyId}
+	</select>
+	
+    <insert id="insertCompany" parameterType="com.kona.kms.web.ss.company.model.CompanyModel"> 
+		INSERT INTO khm_com (
+			com_id, 
+			com_name, 
+			com_type_cd,
+			cntry_cd,
+			fax,
+			email,
+			hp_url,
+			addr,
+			biz_lic_no,
+			ofc_tel_no,
+			com_descr,
+			com_stats_cd,
+			com_stats_descr,
+			reg_user_id, 
+			reg_tmpst, 
+			upd_user_id, 
+			upd_tmpst)
+        VALUES (
+        	#{companyId},
+        	#{companyName},
+        	#{companyTypeCode},
+        	#{countryCode},
+        	#{fax},
+        	#{email},
+        	#{homepageUrl},
+        	#{address},
+        	#{bizLicenseNo},
+        	#{officeTelNum},
+        	#{companyDescription},
+        	#{companyStatusCode},
+        	#{companyStatusDescription},        	        	
+        	#{registrationUserId}, 
+        	#{registrationDate}, 
+        	#{updateUserId}, 
+        	#{updateDate}) 
+	</insert>
+ 
+</mapper>

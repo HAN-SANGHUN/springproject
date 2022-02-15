@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>	
+	<settings>
+		<setting name="lazyLoadingEnabled" value="true"/>
+		<setting name="jdbcTypeForNull" value="VARCHAR" />
+	</settings>	
+	
+	<mappers>
+		<mapper resource="/sqlmap/mappers/web/company-dao.xml" />
+		<mapper resource="/sqlmap/mappers/web/kms-user-dao.xml" />
+		<mapper resource="/sqlmap/mappers/web/profile-dao.xml" />
+		<mapper resource="/sqlmap/mappers/web/cert-req-dao.xml" />
+		<mapper resource="/sqlmap/mappers/web/cert-mgmt-dao.xml"/>		
+		<mapper resource="/sqlmap/mappers/web/hsm-meta-dao.xml" />
+		<mapper resource="/sqlmap/mappers/web/hsm-token-dao.xml" />
+		<mapper resource="/sqlmap/mappers/crypto/keyInfo-dao.xml"/>		
+		<mapper resource="/sqlmap/mappers/crypto/tokenmap-dao.xml"/>	
+	</mappers>
+</configuration>

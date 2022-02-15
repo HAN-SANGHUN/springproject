@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<sitemesh>
+	
+	<mapping path="/*" decorator="/WEB-INF/views/main-decorator.jsp" />
+	<mapping path="/**/popup/*" decorator="/WEB-INF/views/popup-decorator.jsp" />
+	
+	<!-- Exclude path from decoration -->
+	<mapping path="/Login/*" exclude="true" />	
+		
+	<mapping path="/**/*print.do" exclude="true" />
+	<mapping path="/**/*excel.do" exclude="true" />
+</sitemesh>

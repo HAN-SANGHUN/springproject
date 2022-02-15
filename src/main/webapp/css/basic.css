@@ -1,0 +1,82 @@
+@charset "utf-8";
+
+
+/*=================================================================================
+ *												Default Tag Style Definition
+ =================================================================================*/
+
+html, body {
+	margin: 0px;
+	padding: 0px;
+	width:100%; 
+	height: 100%;
+}
+
+body {
+	font-family:  "NanumGothic", NGBold , NGNormal,Dotum, Tahoma, Verdana, AppleGothic, sans-serif;
+	color: #707381;
+	line-height: 18px;
+	border-collapse: collapse;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin: 0px;
+	padding: 0px;
+	font-size: 1em;
+}
+
+ol, ul {
+	margin: 0px;
+	padding: 0px;
+	list-style: none;
+}
+
+div, li, dl, dt, dd, form, iframe, p, a, span, blockquote {
+	margin: 0px;
+	padding: 0px;
+}
+
+fieldset {
+	margin: 0px;
+	padding: 0px;
+	border: 0px solid transparent;		/* : BUG : Opera 7 에서 border: none 버그 있음 */
+}
+
+legend, hr {
+	display: none;
+}
+
+label {
+	vertical-align: middle;
+}
+
+img {
+	margin: 0px;
+	padding: 0px;
+	border: none;
+	vertical-align: top;
+}
+
+table, th, td {
+	margin: 0px;
+	padding: 0px;
+	font-size: 1em;
+	border-collapse: collapse;
+}
+
+a, area, { behavior:expression(this.hideFocus=true); }
+a:active, a:focus, area:active, area:focus { outline:none; }
+
+form{clear:both;}
+
+input, textarea {
+	font-family:"NanumGothic",NGNormal;
+	margin: 0px;
+	padding: 0px;
+	border:0px;
+	outline-style:none;
+	vertical-align: middle;
+}
+
+
+address,em{font-style:normal;}

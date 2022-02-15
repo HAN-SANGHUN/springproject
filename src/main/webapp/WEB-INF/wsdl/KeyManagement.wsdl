@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions 
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" 
+	xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" 
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" 
+	xmlns:wsoap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" 
+	xmlns:konakms="http://www.konai.com/KmsExchangeMessage" 
+	xmlns:tns="http://www.konai.com/KeyManagement" 
+	targetNamespace="http://www.konai.com/KeyManagement">
+
+	<wsdl:types>
+		<xsd:schema>
+			<xsd:import namespace="http://www.konai.com/KmsExchangeMessage" schemaLocation="../xsd/KmsExchangeMessage.xsd"/>
+ 		</xsd:schema>
+    </wsdl:types>
+
+	<wsdl:message name="KeyInfoRequest">
+		<wsdl:part name="KeyInfoRequest" element="konakms:KeyInfoRequest"/>
+	</wsdl:message>
+	<wsdl:message name="KeyInfoResponse">
+		<wsdl:part name="KeyInfoResponse" element="konakms:KeyInfoResponse"/>
+	</wsdl:message>
+	
+	<wsdl:message name="RequestedBINCertification">
+		<wsdl:part name="RequestedBINCertification" element="konakms:RequestedBINCertification"/>
+	</wsdl:message>
+	<wsdl:message name="RequestedBINCertificationResponse">
+		<wsdl:part name="RequestedBINCertificationResponse" element="konakms:RequestedBINCertificationResponse"/>
+	</wsdl:message>
+	
+	<wsdl:message name="RegisteredBINCertification">
+		<wsdl:part name="RegisteredBINCertification" element="konakms:RegisteredBINCertification"/>
+	</wsdl:message>
+	<wsdl:message name="RegisteredBINCertificationResponse">
+		<wsdl:part name="RegisteredBINCertificationResponse" element="konakms:RegisteredBINCertificationResponse"/>
+	</wsdl:message>
+	
+	<wsdl:portType name="KeyManagementPort">
+		<wsdl:operation name="SendKeyInfo">
+			<wsdl:input message="tns:KeyInfoRequest" wsaw:Action="http://www.konai.com/KeyManagement/SendKeyInfoRequest"/>
+			<wsdl:output message="tns:KeyInfoResponse" wsaw:Action="http://www.konai.com/KeyManagement/SendKeyInfoResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="SendRequestedBINCert" >
+			<wsdl:input message="tns:RequestedBINCertification" wsaw:Action="http://www.konai.com/KeyManagement/SendRequestedBINCertification"/>
+			<wsdl:output message="tns:RequestedBINCertificationResponse" wsaw:Action="http://www.konai.com/KeyManagement/SendRequestedBINCertificationResponse"/>
+		</wsdl:operation>
+		<wsdl:operation name="SendRegisteredBINCert">
+			<wsdl:input message="tns:RegisteredBINCertification" wsaw:Action="http://www.konai.com/KeyManagement/SendRegisteredBINCertification"/>
+			<wsdl:output message="tns:RegisteredBINCertificationResponse" wsaw:Action="http://www.konai.com/KeyManagement/SendRegisteredBINCertificationResponse"/>			
+		</wsdl:operation>
+	</wsdl:portType>
+
+	<wsdl:binding name="KeyManagementBinding" type="tns:KeyManagementPort">
+		<soap12:binding style="document" transport="http://schemas.xmlsoap.org/wsdl/soap12/"/>
+		<wsaw:UsingAddressing wsdl:required="true"/>
+		<wsdl:operation name="SendKeyInfo">
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>			
+		</wsdl:operation>
+		<wsdl:operation name="SendRegisteredBINCert">
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+		<wsdl:operation name="SendRequestedBINCert">
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	
+	<wsdl:service name="KeyManagementService">
+		<wsdl:port name="KeyManagementEndPoint" binding="tns:KeyManagementBinding">
+			<soap12:address location="http://10.10.20.117/KMS/keyinfo"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
